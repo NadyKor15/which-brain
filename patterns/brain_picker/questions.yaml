@@ -1,0 +1,23 @@
+# Which Brain? — Request 1, text only (brief §2, wording variant A).
+addressed_to_me:
+  type: noul
+  instructions: Is the latest utterance a request to the kitchen assistant, rather than speech meant for another person, a pet, the radio or the TV?
+  criteria:
+    "true": the speaker wants the assistant to answer or do something
+    "false": the speaker is talking to someone else, or it is background speech
+
+about_medicine:
+  type: noul
+  instructions: Would a correct answer require identifying, dosing, or judging a medicine, pill, vitamin or supplement?
+  criteria:
+    "true": the answer would name, compare, count or judge a medicine or supplement
+    "false": the answer is about food, cooking, or anything that is not a medicine
+
+brain:
+  type: choice
+  instructions: Which helper should answer the latest request?
+  criteria:
+    quiet_answer: general knowledge or simple math, no camera needed (timers, conversions, substitutions)
+    look: "a quick look at a package or object the user holds: what it is, a short label"
+    read_closely: "reading long or small printed text: cooking instructions, ingredients, dates"
+    ask_human: "a person should handle it: medicine, safety, or anything risky to guess"
