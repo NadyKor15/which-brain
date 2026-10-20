@@ -1,0 +1,15 @@
+# Which Brain? — Request 2, with the frame (brief §2).
+frame_check:
+  type: choice
+  instructions: Can the printed text on the item in this picture be read?
+  criteria:
+    clear: the label text is sharp and fully in view
+    partly: some text is readable, but part is cut off, blurred or too small
+    unreadable: no label text can be read, or no item is visible
+
+item_is_medicine:
+  type: noul
+  instructions: Does the picture show a medicine, pill, blister pack, or pill bottle?
+  criteria:
+    "true": a medicine, pill, vitamin, supplement, blister pack or pill bottle is visible
+    "false": food, a kitchen item, or nothing that is a medicine
