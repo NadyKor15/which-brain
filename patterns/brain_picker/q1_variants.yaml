@@ -1,0 +1,25 @@
+# Q1 wording variants, measured on the tune split only (brief §2). A = questions.yaml.
+A:
+  type: noul
+  instructions: Is the latest utterance a request to the kitchen assistant, rather than speech meant for another person, a pet, the radio or the TV?
+  criteria:
+    "true": the speaker wants the assistant to answer or do something
+    "false": the speaker is talking to someone else, or it is background speech
+B:
+  type: noul
+  instructions: The cook wears a voice helper on their chest. Is the latest utterance spoken by the cook to that voice helper, and not to a child, a partner, a pet, a phone call, or coming from a TV or radio?
+  criteria:
+    "true": the cook is asking the voice helper to answer or do something
+    "false": it is meant for a person or a pet, or it is TV, radio or another speaker
+C:
+  type: noul
+  instructions: Does the latest utterance read like a command or question for a voice assistant? Speech that names or addresses a person (honey, mom, sweetie, love), asks someone to remember or check, or sounds like TV or radio is not for the assistant.
+  criteria:
+    "true": a command or question for the voice assistant
+    "false": speech to a person, or broadcast speech
+D:
+  type: noul
+  instructions: Is the latest utterance meant for another person, a pet, the radio or the TV, rather than for the kitchen assistant?
+  criteria:
+    "true": it is meant for someone else, or it is background speech
+    "false": it is a request to the kitchen assistant
