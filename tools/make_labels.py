@@ -17,6 +17,7 @@ CM = DPI / 2.54
 PAGE = (int(8.5 * DPI), int(11 * DPI))
 MARGIN = int(0.3 * DPI)
 GAP = int(0.4 * CM)
+SMALL_PX = round(7 / 72 * DPI)  # 7 pt, typical instructions / best-before print on a box
 FONTS = "/System/Library/Fonts/Supplemental/"
 OUT = Path(__file__).resolve().parents[1] / "eval" / "labels"
 
@@ -72,8 +73,10 @@ def render(label) -> Image.Image:
         d.text((w / 2, y), big, font=f, fill="black", anchor="ma")
         y += f.size + pad
     if small:
-        step = min(int(h * 0.075), (h - y - pad) // max(1, len(small)))
-        f = font(max(14, int(step * 0.72)), bold=False)
+        # small print at real-package size (Nadya, 2026-10-21: ours was ~3x too big, so the
+        # quick model could read it and the close-reading model had nothing to do)
+        f = font(SMALL_PX, bold=False)
+        step = int(SMALL_PX * 1.3)
         for line in small:
             d.text((pad, y), line, font=f, fill="black")
             y += step
