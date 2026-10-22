@@ -44,9 +44,17 @@ class Call:
     tokens_out: int = 0
     error: str | None = None
 
+    estimated: bool = False  # no usage came back (structured output): the ceiling is the price
+
     @property
     def usd(self) -> float:
+        if self.estimated and not (self.tokens_in or self.tokens_out):
+            return self.usd_ceiling
         return nova_usd(self.model, self.tokens_in, self.tokens_out)
+
+    def started_ms_from(self, t0: float) -> float:
+        """Time of the first text token, measured from ``t0`` (a perf_counter)."""
+        return (self.started - t0) * 1000 + (self.first_token_ms or 0.0)
 
 
 def _text_chars(content: Any) -> int:
@@ -114,9 +122,27 @@ class CappedModel(Model):
         schema = getattr(output_model, "model_json_schema", dict)()
         usd = worst_case_usd(self.model, prompt, system_prompt, self.max_tokens, [schema])
         self.cap.charge(usd, f"bedrock {self.model} structured")
-        return self.inner.structured_output(
-            output_model, prompt, system_prompt=system_prompt, **kwargs
-        )
+        call = Call(self.model, round(usd, 6), time.perf_counter(), estimated=True)
+        self.calls.append(call)
+        return self._structured(call, output_model, prompt, system_prompt, **kwargs)
+
+    async def _structured(
+        self, call: Call, output_model: Any, prompt: Any, system_prompt: Any, **kwargs: Any
+    ):
+        try:
+            async for event in self.inner.structured_output(
+                output_model, prompt, system_prompt=system_prompt, **kwargs
+            ):
+                stop = event.get("stop") if isinstance(event, dict) else None
+                if isinstance(stop, tuple | list) and len(stop) >= 3 and isinstance(stop[2], dict):
+                    call.tokens_in = int(stop[2].get("inputTokens", 0))
+                    call.tokens_out = int(stop[2].get("outputTokens", 0))
+                yield event
+        except Exception as exc:
+            call.error = type(exc).__name__
+            raise
+        finally:
+            call.total_ms = (time.perf_counter() - call.started) * 1000
 
     async def stream(
         self, messages: Any, tool_specs: Any = None, system_prompt: Any = None, **kwargs: Any

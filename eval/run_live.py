@@ -726,16 +726,24 @@ async def classifier_turn(t: Any, brains: Any, bp: Any) -> Any:
                 )
             agent = Agent(model=router, system_prompt=n8agent.SYSTEM_PROMPT, callback_handler=None)
             result = await agent.invoke_async([{"role": "user", "content": content}])
-            reply.answer = reply.said = n8agent._text(result.message)
+            reply.answer = n8agent._text(result.message)
             reply.routed = routed.get("name")
             reply.brain = reply.routed
+            # the same last checks in code as the router (no Request 2: b has no frame_check)
+            reply.said, reply.verdict = n8agent.speak_reply(
+                reply.answer, None, reply.routed in bp.IMAGE_BRAINS
+            )
+            if reply.said == rules.MEDICINE_REFUSE:
+                reply.action = "refuse"
     calls = brains.take_calls()
     reply.calls = [n8agent._call_row(c) for c in calls]
     reply.usd = round(sum(c.usd for c in calls), 7)
-    first = [c.first_token_ms for c in calls[1:] if c.first_token_ms is not None]
+    answered = [
+        c for c in calls if not c.estimated and c.error is None and c.first_token_ms is not None
+    ]
     reply.ms = {
         "decided_ms": round((decided - started) * 1000, 1),
-        "first_token_ms": first[-1] if first else None,
+        "first_token_ms": round(answered[-1].started_ms_from(started), 1) if answered else None,
         "ready_ms": round((time.perf_counter() - started) * 1000, 1),
     }
     return reply
@@ -760,8 +768,10 @@ def cmd_bench(args: argparse.Namespace) -> None:
     md = [
         f"# Time to first word and cost ({stamp()})",
         "",
-        "Clock: from the end of speech in the recording. Steps: Transcribe final → Decider Request 1 "
-        "(earcon) → Bedrock answer ∥ Decider Request 2 → Polly first byte. Mac mini Decider over an SSH "
+        "Columns marked (from end of speech) run on one clock that starts when the cook stops "
+        "talking in the recording: Transcribe final → Decider Request 1 (first sound = earcon) → "
+        "Bedrock first token ∥ Decider Request 2 → answer ready → Polly first byte = first word. "
+        "Columns marked (call) are single-call durations. Decider runs on a Mac mini over an SSH "
         "tunnel; mini hardware is not in $.",
         "",
     ]
@@ -783,7 +793,9 @@ def cmd_bench(args: argparse.Namespace) -> None:
                 "earcon_ms": asr + ms["decided_ms"]
                 if ms.get("decided_ms") is not None and x["action"] != "silent"
                 else None,
-                "bedrock_first_token_ms": ms.get("first_token_ms"),
+                "bedrock_first_token_ms": asr + ms["first_token_ms"]
+                if ms.get("first_token_ms") is not None
+                else None,
                 "decider2_ms": ms.get("frame_decider_ms"),
                 "ready_ms": asr + ms["ready_ms"] if ms.get("ready_ms") is not None else None,
                 "polly_first_byte_ms": fb,
@@ -796,7 +808,7 @@ def cmd_bench(args: argparse.Namespace) -> None:
         table = {}
         md.append(f"## {variant} ({path.name}, n={len(items)})")
         md.append(
-            "| path | n | transcribe | Decider R1 | first sound | Bedrock 1st token | Decider R2 | answer ready | Polly 1st byte | **first word** p50 / p90 |"
+            "| path | n | Transcribe final (from end of speech) | Decider R1 (call) | first sound (from end of speech) | Bedrock 1st token (from end of speech) | Decider R2 (call) | answer ready (from end of speech) | Polly 1st byte (call) | **first word (from end of speech)** p50 / p90 |"
         )
         md.append("|---|---|---|---|---|---|---|---|---|---|")
         for g, rs in sorted(groups.items()):
@@ -818,17 +830,36 @@ def cmd_bench(args: argparse.Namespace) -> None:
             if a["id"] in {x["id"] for x in items}
         )
         chars = sum(len(x.get("said") or "") for x in items)
+        asr_items = [
+            a for a in read_jsonl(latest("asr-*.jsonl")) if a["id"] in {x["id"] for x in items}
+        ]
+        audio_min15 = sum(max(15.0, a["audio_s"]) for a in asr_items)
         cost = {
             "bedrock_per_1000": round(usd_bedrock / n * 1000, 4),
-            "transcribe_per_1000_list": round(audio_s * 0.0001667 / n * 1000, 4),
+            "transcribe_per_1000_per_second": round(audio_s * 0.0001667 / n * 1000, 4),
+            "transcribe_per_1000_15s_minimum": round(audio_min15 * 0.0001667 / n * 1000, 4),
             "polly_per_1000": round(chars * 16 / 1e6 / n * 1000, 4),
         }
-        cost["full_stack_per_1000"] = round(sum(cost.values()), 4)
+        cost["full_stack_per_1000_per_second"] = round(
+            cost["bedrock_per_1000"]
+            + cost["transcribe_per_1000_per_second"]
+            + cost["polly_per_1000"],
+            4,
+        )
+        cost["full_stack_per_1000_15s_minimum"] = round(
+            cost["bedrock_per_1000"]
+            + cost["transcribe_per_1000_15s_minimum"]
+            + cost["polly_per_1000"],
+            4,
+        )
         table["cost"] = cost
         md.append(
-            f"\n$ per 1,000 phrases: Bedrock {cost['bedrock_per_1000']} · Transcribe (list $0.0001667/s, no minimum) "
-            f"{cost['transcribe_per_1000_list']} · Polly neural ($16/1M chars) {cost['polly_per_1000']} · "
-            f"**full stack {cost['full_stack_per_1000']}** (Lambda not built). Prices: eval/cost.md.\n"
+            f"\n$ per 1,000 phrases: Bedrock {cost['bedrock_per_1000']} (from the usage each call returned) · "
+            f"Transcribe streaming at $0.0001667/s (AWS price list, eval/cost.md): per second "
+            f"{cost['transcribe_per_1000_per_second']}, or {cost['transcribe_per_1000_15s_minimum']} if a 15 s "
+            "minimum per request applies (not re-checked on the pricing page in this run) · Polly neural "
+            f"($16/1M chars) {cost['polly_per_1000']} · **full stack {cost['full_stack_per_1000_per_second']}"
+            f" – {cost['full_stack_per_1000_15s_minimum']}** (Lambda not built).\n"
         )
         summary["variants"][variant] = table
     rtt = []

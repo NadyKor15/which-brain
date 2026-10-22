@@ -8,9 +8,9 @@ Three steps, cheapest first:
 2. ``look(client, frame)``: Decider Request 2 asks ``frame_check`` (clear / partly / unreadable)
    and ``item_is_medicine`` (noul, P(yes) >= 0.30 refuses).
 3. ``hedge(verdict, answer)``: plain -> the answer as is; hedge -> "I think ..." for words, and for
-   numbers what is visible plus "turn it" (never "I think" next to a number); reask -> "Hold it a
-   bit closer." at most twice (``ReaskLoop``), then the hedged answer; refuse -> the fixed
-   medicine line.
+   numbers "Hold it a bit closer." (never "I think" next to a number; with OCR text, the visible
+   start plus "turn it"); reask -> "Hold it a bit closer." at most twice (``ReaskLoop``), then
+   hedge; refuse -> the fixed medicine line; Decider could not look -> "Sorry, ... ask your helper."
 
     from handler import ReaskLoop, hedge, image_gate, look
     gate = image_gate(frame)
@@ -62,14 +62,31 @@ async def look(
     return Look(decide.frame_verdict(fc, med, reasks=reasks), fc, med, resp.client_ms)
 
 
+SORRY = "Sorry, something went wrong. Please ask your helper."
+
+
 def hedge(verdict: str, answer: str, visible_text: str | None = None) -> str:
-    """The words that may be said for this verdict. ``visible_text`` defaults to the answer."""
+    """The words that may be said for this verdict.
+
+    ``visible_text`` is OCR text from the frame, when you have it: then every number and quoted word
+    in the answer is checked against it (``rules.compose``). Without it, a hedged answer that holds a
+    number asks for a closer look, and a frame Decider could not check is never answered.
+    """
     if verdict == "refuse":
         return rules.MEDICINE_REFUSE
+    if verdict == "degraded":
+        return SORRY
     if verdict == "reask":
         return rules.HOLD_CLOSER
-    level = decide.COMPOSE_LEVEL.get(verdict, "partly")
-    return rules.compose(level, answer, visible_text if visible_text is not None else answer)
+    if visible_text is not None:
+        return rules.compose(decide.COMPOSE_LEVEL[verdict], answer, visible_text)
+    if rules.hedge_violations(answer):
+        return rules.HOLD_CLOSER
+    if verdict == "hedge":
+        if rules.is_critical(answer) or not answer:
+            return rules.HOLD_CLOSER
+        return f"I think {answer[0].lower()}{answer[1:]}"
+    return answer
 
 
 @dataclass

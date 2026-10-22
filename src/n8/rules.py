@@ -12,8 +12,9 @@ from dataclasses import dataclass
 HEDGES = ("i think", "it looks like", "looks like", "probably", "maybe", "might be", "seems", "i guess")
 
 NUMBER_WORDS = (
-    "zero two three four five six seven eight nine ten eleven twelve fifteen twenty "
-    "thirty forty fifty hundred thousand half quarter dozen"
+    "zero two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen "
+    "sixteen seventeen eighteen nineteen twenty thirty forty fifty sixty seventy eighty ninety "
+    "hundred thousand million half quarter dozen percent"
 ).split()
 
 UNITS = r"(?:g|grams?|kg|oz|ounces?|lbs?|pounds?|ml|l|liters?|litres?|cups?|tbsp|tsp|degrees?|°[cf]?|minutes?|mins?|hours?|seconds?|mg|mcg)"

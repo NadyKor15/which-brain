@@ -6,7 +6,11 @@
 ``build_agent`` is ``Agent(model=ModelRouter([micro, lite, pro], strategy=DeciderRoutingStrategy(cache)),
 interventions=[SafetyFirstHandler(client, cache)])``. ``run_turn`` waits for both the Bedrock answer and
 Decider's look at the frame before anything is said, so the hedge ("I think") and a medicine refusal
-are chosen before the first word. Every number in a reply goes through ``rules.compose``.
+are chosen before the first word. ``speak_reply`` then applies three last checks in code to every
+model answer: medicine words or a dose in the answer refuse; "I think" never stands next to a
+number; and if Decider could not look at the frame, nothing the model said about it is spoken.
+There is no OCR at runtime, so a hedged answer with a number asks for a closer look instead of
+quoting the model's reading as if it were the label.
 """
 
 from __future__ import annotations
@@ -24,7 +28,7 @@ from strands.models.routing import ModelRouter
 
 from . import rules
 from .brains import BRAIN_MODEL, Brains, Call
-from .decide import COMPOSE_LEVEL
+from .decide import MEDICINE_KEYWORDS
 
 ROOT = Path(__file__).resolve().parents[2]
 PATTERN = ROOT / "patterns" / "brain_picker" / "handler.py"
@@ -32,9 +36,11 @@ PATTERN = ROOT / "patterns" / "brain_picker" / "handler.py"
 SYSTEM_PROMPT = (
     "You are a hands-free kitchen helper for a cook with low vision. Answer in at most two short "
     "sentences, in plain words. If a picture is attached, read only text you can actually see on "
-    "it; if the text you need is not visible, say so and do not guess. Never identify, compare or "
-    "dose a medicine, pill, vitamin or supplement."
+    "it; if the text you need is not visible, say so and do not guess. Do not say 'I think' or "
+    "'probably': if you are not sure, say you are not sure. Never identify, compare or dose a "
+    "medicine, pill, vitamin or supplement."
 )
+NOT_SURE = "I'm not sure about that. Please check with your helper."
 
 EARCON = {"quiet_answer": "heard", "look": "looking", "read_closely": "reading"}
 
@@ -118,17 +124,34 @@ def _call_row(c: Call) -> dict[str, Any]:
     }
 
 
-def speak_reply(td: Any, answer: str, frame: Any) -> tuple[str, str | None]:
-    """The words that are said for an answered turn, and the frame verdict used."""
-    if frame is None:
-        return answer, None
-    verdict = frame.verdict
+def answer_guard(answer: str) -> bool:
+    """True when a model answer talks about medicine or states a dose: code refuses instead."""
+    return bool(MEDICINE_KEYWORDS.search(answer) or rules.states_dose(answer))
+
+
+def speak_reply(answer: str, frame: Any, image_brain: bool) -> tuple[str, str | None]:
+    """The words said for an answered turn, and the verdict behind them.
+
+    ``frame`` is Request 2's result (or None when no frame was checked); ``image_brain`` says the
+    answer was about the frame (look / read_closely) rather than a text answer with a frame nearby.
+    """
+    if answer_guard(answer):
+        return rules.MEDICINE_REFUSE, "answer_guard"
+    verdict = frame.verdict if frame is not None else None
     if verdict == "refuse":
         return rules.MEDICINE_REFUSE, verdict
-    if verdict == "reask":
+    if verdict == "degraded":  # Decider could not look: no medicine check on the frame, fail closed
+        return bp.SORRY, verdict
+    if image_brain and verdict == "reask":
         return rules.HOLD_CLOSER, verdict
-    level = COMPOSE_LEVEL.get(verdict, "partly")  # "degraded": Decider could not look, so hedge
-    return rules.compose(level, answer, visible_text=answer), verdict
+    if image_brain and verdict == "hedge":
+        if rules.is_critical(answer):  # no OCR to show the visible start: ask for a closer look
+            return rules.HOLD_CLOSER, verdict
+        said = f"I think {answer[0].lower()}{answer[1:]}" if answer else rules.HOLD_CLOSER
+        return said, verdict
+    if rules.hedge_violations(answer):  # the model hedged a number itself
+        return (rules.HOLD_CLOSER if image_brain else NOT_SURE), "hedged_number"
+    return answer, verdict
 
 
 async def run_turn(turn: Any, agent: Agent, cache: Any, brains: Brains) -> Reply:
@@ -146,6 +169,8 @@ async def run_turn(turn: Any, agent: Agent, cache: Any, brains: Brains) -> Reply
     reply.usd = round(sum(c.usd for c in calls), 7)
     reply.ms["agent_ms"] = round((returned - started) * 1000, 1)
     if td is None or error is not None:
+        if td is not None and td.frame_task is not None:
+            td.frame_task.cancel()  # the turn failed: do not leave Request 2 running on the mini
         reply.ms["error"] = None
         reply.answer = error
         return reply
@@ -172,7 +197,10 @@ async def run_turn(turn: Any, agent: Agent, cache: Any, brains: Brains) -> Reply
     reply.answer = answer
     frame = None
     if td.frame_task is not None:
-        frame = await td.frame_task
+        try:
+            frame = await td.frame_task
+        except Exception:  # anything unexpected from Request 2 fails closed
+            frame = bp.FrameResult("degraded")
         reply.ms["frame_decider_ms"] = frame.client_ms
         reply.ms["frame_decider_server_ms"] = frame.server_ms
         if frame.frame is not None:
@@ -180,11 +208,16 @@ async def run_turn(turn: Any, agent: Agent, cache: Any, brains: Brains) -> Reply
                 "frame": dict(frame.frame.probabilities),
                 "item_medicine": frame.item_medicine.probability,
             }
-    reply.said, reply.verdict = speak_reply(td, answer, frame)
-    if reply.verdict == "refuse":
+    reply.said, reply.verdict = speak_reply(answer, frame, d.brain in bp.IMAGE_BRAINS)
+    if reply.said == rules.MEDICINE_REFUSE:
         reply.action = "refuse"
-    first = [c.first_token_ms for c in calls if c.first_token_ms is not None]
-    reply.ms["first_token_ms"] = round(first[0], 1) if first else None
+    elif reply.said == bp.SORRY:
+        reply.action = "error"
+    answered = [c for c in calls if c.error is None and c.first_token_ms is not None]
+    if (
+        answered
+    ):  # on the turn clock: from the start of the turn to the answering call's first token
+        reply.ms["first_token_ms"] = round(answered[-1].started_ms_from(started), 1)
     reply.ms["ready_ms"] = round((time.perf_counter() - started) * 1000, 1)
     return reply
 
@@ -203,7 +236,7 @@ async def always(model: Any, turn: Any, frame_jpeg: bytes | None, brains: Brains
     except Exception as exc:
         answer, action = f"{type(exc).__name__}: {exc}", "error"
     calls = brains.take_calls()
-    first = [c.first_token_ms for c in calls if c.first_token_ms is not None]
+    answered = [c for c in calls if c.error is None and c.first_token_ms is not None]
     return Reply(
         action=action,
         said=answer,
@@ -212,7 +245,7 @@ async def always(model: Any, turn: Any, frame_jpeg: bytes | None, brains: Brains
         calls=[_call_row(c) for c in calls],
         usd=round(sum(c.usd for c in calls), 7),
         ms={
-            "first_token_ms": round(first[0], 1) if first else None,
+            "first_token_ms": round(answered[-1].started_ms_from(started), 1) if answered else None,
             "ready_ms": round((time.perf_counter() - started) * 1000, 1),
         },
     )

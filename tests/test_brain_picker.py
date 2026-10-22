@@ -338,7 +338,8 @@ def test_partly_hedges_words_but_never_a_number(tmp_path):
         turn(frame=label_image()),
         texts={"lite": "Bake 45 minutes at 350 degrees."},
     )
-    assert not rules.hedge_violations(reply.said) and "cut off" in reply.said
+    # no OCR at runtime: a hedged number asks for a closer look, never quotes the model as the label
+    assert not rules.hedge_violations(reply.said) and reply.said == rules.HOLD_CLOSER
 
 
 def test_unreadable_asks_closer_at_most_twice(tmp_path):
@@ -474,3 +475,109 @@ def test_near_mic_modes_state_off_and_code(tmp_path):
     assert td.decision.action == "silent" and len(server.requests) == n  # no Decider call
     td = asyncio.run(code.decide_turn(turn(near_mic=True)))
     assert td.decision.action == "answer" and "near_mic" not in server.requests[-1]["state"]
+
+
+# ---------------------------------------------------------------- review findings, 2026-10-22
+
+
+def test_vision_check_down_with_a_pill_in_frame_is_not_answered(tmp_path):
+    def respond(body):
+        if "frame_check" in body["questions"]:
+            return 503, {"detail": "vision down"}
+        return text_server().responder(body)
+
+    reply, _, _ = play(
+        tmp_path,
+        FakeServer(respond),
+        turn("What's this?", frame=label_image()),
+        texts={"lite": "This is a small white bottle."},
+    )
+    assert reply.said == bp.SORRY and reply.verdict == "degraded"
+
+
+def test_vision_check_4xx_fails_closed_and_does_not_crash(tmp_path):
+    def respond(body):
+        if "frame_check" in body["questions"]:
+            return 422, {"detail": "bad image"}
+        return text_server().responder(body)
+
+    reply, _, _ = play(
+        tmp_path, FakeServer(respond), turn(frame=label_image()), texts={"lite": "Tomato soup."}
+    )
+    assert reply.said == bp.SORRY and reply.verdict == "degraded"
+
+
+def test_quiet_brain_with_a_pill_in_view_still_refuses_and_sends_no_frame(tmp_path):
+    quiet = {"quiet_answer": 0.95, "look": 0.02, "read_closely": 0.02, "ask_human": 0.01}
+    reply, b, server = play(
+        tmp_path,
+        text_server(brain=quiet, item_medicine=0.6),
+        turn("Can I have two of these with my coffee?", frame=label_image()),
+        texts={"micro": "Yes, two is fine."},
+    )
+    assert reply.action == "refuse" and reply.said == rules.MEDICINE_REFUSE
+    assert not any("image" in blk for blk in b.micro.inner.seen[0][-1]["content"])
+    assert any("frame_check" in r["questions"] for r in server.requests)
+
+
+def test_model_answer_about_medicine_or_a_dose_is_refused_by_code(tmp_path):
+    quiet = {"quiet_answer": 0.95, "look": 0.02, "read_closely": 0.02, "ask_human": 0.01}
+    for text in ("Take 2 tablets after dinner.", "That is your heart medicine."):
+        reply, _, _ = play(
+            tmp_path, text_server(brain=quiet), turn("Is this the one?"), texts={"micro": text}
+        )
+        assert reply.action == "refuse" and reply.said == rules.MEDICINE_REFUSE
+
+
+def test_i_think_never_stands_next_to_a_number(tmp_path):
+    from n8.agent import NOT_SURE
+
+    quiet = {"quiet_answer": 0.95, "look": 0.02, "read_closely": 0.02, "ask_human": 0.01}
+    reply, _, _ = play(
+        tmp_path,
+        text_server(brain=quiet),
+        turn("How long do I boil an egg?"),
+        texts={"micro": "I think about 9 minutes."},
+    )
+    assert reply.said == NOT_SURE
+    reply, _, _ = play(
+        tmp_path,
+        text_server(),
+        turn(frame=label_image()),
+        texts={"lite": "I think it says bake at 180 degrees."},
+    )
+    assert reply.verdict == "hedged_number" and reply.said == rules.HOLD_CLOSER
+    reply, _, _ = play(
+        tmp_path,
+        text_server(brain=quiet),
+        turn("How many?"),
+        texts={"micro": "I think there are sixteen in the pack."},
+    )
+    assert reply.said == NOT_SURE
+
+
+def test_routed_names_the_brain_that_answered_after_escalation(tmp_path):
+    probs = {k: (0.94 if k == "quiet_answer" else 0.02) for k in BRAIN}
+    reply, _, _ = play(tmp_path, text_server(brain=probs), turn("Set a timer."), fail=("micro",))
+    assert reply.routed == "look" and reply.model == "lite"
+
+
+def test_frame_task_is_cancelled_when_every_brain_fails(tmp_path, monkeypatch):
+    async def hang(self, img, reasks=0):
+        await asyncio.sleep(30)
+
+    monkeypatch.setattr(bp.SafetyFirstHandler, "check_frame", hang)
+    seen = []
+    b = brains(tmp_path, fail=("micro", "lite", "pro"))
+    cache = bp.DecisionCache()
+    agent = build_agent(b, text_server().client(), cache, on_decision=seen.append)
+
+    async def go():
+        reply = await run_turn(turn(frame=label_image()), agent, cache, b)
+        await asyncio.sleep(0)
+        return reply
+
+    started = time.perf_counter()
+    reply = asyncio.run(go())
+    assert reply.said == bp.SORRY and time.perf_counter() - started < 5
+    assert seen and seen[0].frame_task.cancelled()

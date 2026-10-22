@@ -57,7 +57,11 @@ ModelRouter(brain_candidates(micro, lite, pro), strategy=DeciderRoutingStrategy(
   above the one that failed, so it only escalates up.
 - Decider unreachable or slower than 1.5 s: the keyword net (`MEDICINE_KEYWORDS`) refuses on any hit
   and everything else goes to the strongest brain, logged `degraded=true`.
-- Request 2 slower than 2.5 s: the answer is spoken hedged, never plain.
+- Request 2 down, slower than 2.5 s or erroring: nothing about the frame is said ("Sorry, something
+  went wrong. Please ask your helper."), because the medicine check on the frame did not run.
+- Last checks in code on every model answer (`src/n8/agent.py: speak_reply`): medicine words or a
+  dose in the answer → the refusal; "I think" never next to a number; with a frame in view, the
+  `item_is_medicine` check runs for every brain, not only for a look.
 
 ## Measured
 

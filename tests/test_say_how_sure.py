@@ -63,7 +63,12 @@ def test_clear_is_plain_partly_is_hedged_and_numbers_are_never_hedged():
     assert partly.verdict == "hedge"
     assert shs.hedge("hedge", "A red can.").startswith("I think")
     said = shs.hedge("hedge", "Bake 45 minutes at 350 degrees.")
+    assert not rules.hedge_violations(said) and said == rules.HOLD_CLOSER
+    # with OCR text the visible start is read out instead
+    said = shs.hedge("hedge", "Bake 45 minutes at 350 degrees.", visible_text="DIRECTIONS 1. Heat")
     assert not rules.hedge_violations(said) and "cut off" in said
+    # the model hedging a number itself on a plain frame is caught too
+    assert shs.hedge("plain", "I think it says 180 degrees.") == rules.HOLD_CLOSER
 
 
 def test_unreadable_reasks_at_most_twice():
@@ -89,10 +94,10 @@ def test_medicine_in_the_picture_refuses():
     )
 
 
-def test_decider_down_means_hedge_never_plain():
+def test_decider_down_fails_closed_never_answers_about_the_frame():
     down = FakeServer(lambda body: (503, {"detail": "down"}))
     r = asyncio.run(shs.look(down.client(), sharp()))
-    assert r.verdict == "degraded" and shs.hedge(r.verdict, "A red can.").startswith("I think")
+    assert r.verdict == "degraded" and shs.hedge(r.verdict, "A red can.") == shs.SORRY
 
 
 def test_question_files_of_both_patterns_say_the_same():

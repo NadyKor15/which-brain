@@ -193,7 +193,11 @@ class SafetyFirstHandler(InterventionHandler):
             self._on_decision(td)
         if td.decision.action != "answer" or td.speak is not None:
             return Deny(reason=td.speak or "silent")
-        if td.frame_task is not None and turn.frame is not None:
+        if (
+            td.frame_task is not None
+            and turn.frame is not None
+            and td.decision.brain in IMAGE_BRAINS
+        ):
             return Transform(
                 apply=attach_frame(frames.for_bedrock(turn.frame)), reason="frame attached"
             )
@@ -251,6 +255,10 @@ class SafetyFirstHandler(InterventionHandler):
                 td.speak = rules.HOLD_UP
                 return td
             td.frame_task = asyncio.ensure_future(self.check_frame(turn.frame, turn.reasks))
+        elif turn.frame is not None and frames.check(turn.frame).ok:
+            # A text answer with a usable frame in view: still ask item_is_medicine (the OR rule),
+            # but do not send the frame to the model.
+            td.frame_task = asyncio.ensure_future(self.check_frame(turn.frame, turn.reasks))
         return td
 
     async def check_frame(self, img: Image.Image, reasks: int = 0) -> FrameResult:
@@ -261,7 +269,7 @@ class SafetyFirstHandler(InterventionHandler):
                 ),
                 self._vision_timeout,
             )
-        except (DeciderUnavailable, TimeoutError):
+        except Exception:  # unavailable, timeout, a 4xx, an image error: all fail closed upstream
             return FrameResult("degraded")
         fc, med = resp.answers["frame_check"], resp.answers["item_is_medicine"]
         return FrameResult(
@@ -282,18 +290,19 @@ class DeciderRoutingStrategy:
 
     async def select(self, context: RoutingContext, **kwargs: Any) -> RoutingCandidate | None:
         by_name = {c.name: c for c in context.candidates}
+        td = context.invocation_state.get(DECISION_KEY) or self._cache.get(
+            context.invocation_state.get("agent")
+        )
         if context.attempts:
             failed = context.attempts[-1].candidate
             order = [c.name for c in context.candidates]
             above = [
                 c for c in context.candidates if order.index(c.name) > order.index(failed.name)
             ]
-            return (
-                await self._fallback.select(replace(context, candidates=above)) if above else None
-            )
-        td = context.invocation_state.get(DECISION_KEY) or self._cache.get(
-            context.invocation_state.get("agent")
-        )
+            nxt = await self._fallback.select(replace(context, candidates=above)) if above else None
+            if td is not None and nxt is not None:
+                td.routed = nxt.name  # the brain that actually answers, after escalation
+            return nxt
         brain = td.decision.brain if td is not None else None
         name = brain if brain in by_name else STRONGEST
         if td is not None:
