@@ -1,0 +1,13 @@
+{
+ "id": "p019",
+ "sha256": "917da765eaaccef5d9744b1dab25458ddbd3b4705f89b8d2fe9af92dd7d6636d",
+ "text": "Sweetheart, don't touch the stove.",
+ "audio_s": 2.47,
+ "end_of_speech_s": 2.46,
+ "speech_dbfs": -31.0,
+ "final_after_eos_ms": 157.6,
+ "first_partial_ms": 640.8,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

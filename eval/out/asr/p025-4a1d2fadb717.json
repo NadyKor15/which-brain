@@ -1,0 +1,13 @@
+{
+ "id": "p025",
+ "sha256": "4a1d2fadb717c22e09feb540e8db9d1b1db838421d1f6abef83da3ce3bc54984",
+ "text": "Is this one still good? What do you think?",
+ "audio_s": 2.565,
+ "end_of_speech_s": 2.43,
+ "speech_dbfs": -26.4,
+ "final_after_eos_ms": 213.4,
+ "first_partial_ms": 628.9,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

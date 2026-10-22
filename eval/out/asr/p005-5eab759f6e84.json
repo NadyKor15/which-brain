@@ -1,0 +1,13 @@
+{
+ "id": "p005",
+ "sha256": "5eab759f6e841e5c95b7928157128fbc9dcaa5faf35b6b1a0f69a01a370d0802",
+ "text": "I want the red cup.",
+ "audio_s": 1.67,
+ "end_of_speech_s": 1.65,
+ "speech_dbfs": -35.66,
+ "final_after_eos_ms": 166.6,
+ "first_partial_ms": 627.9,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

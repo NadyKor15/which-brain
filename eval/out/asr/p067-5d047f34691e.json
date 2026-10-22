@@ -1,0 +1,13 @@
+{
+ "id": "p067",
+ "sha256": "5d047f34691ec91866c9057daeba40913ab601c972b8a7c9276ea23881b989b6",
+ "text": "What's on this label?",
+ "audio_s": 1.709,
+ "end_of_speech_s": 1.59,
+ "speech_dbfs": -24.84,
+ "final_after_eos_ms": 275.7,
+ "first_partial_ms": 628.3,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

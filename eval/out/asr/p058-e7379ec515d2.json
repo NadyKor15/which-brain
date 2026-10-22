@@ -1,0 +1,13 @@
+{
+ "id": "p058",
+ "sha256": "e7379ec515d26cf32388782bf9abc2576615336e7db0ce74043c86e5c90d1ad9",
+ "text": "Is this the tomato soup?",
+ "audio_s": 1.872,
+ "end_of_speech_s": 1.77,
+ "speech_dbfs": -28.26,
+ "final_after_eos_ms": 262.5,
+ "first_partial_ms": 852.5,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

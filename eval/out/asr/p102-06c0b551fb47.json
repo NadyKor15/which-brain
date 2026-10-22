@@ -1,0 +1,13 @@
+{
+ "id": "p102",
+ "sha256": "06c0b551fb47b69812904b11097761753bf9483a7c59d6a2b15d6bd1d8e387db",
+ "text": "Is it OK to have this one with wine?",
+ "audio_s": 3.118,
+ "end_of_speech_s": 3.0,
+ "speech_dbfs": -22.38,
+ "final_after_eos_ms": 258.6,
+ "first_partial_ms": 620.7,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

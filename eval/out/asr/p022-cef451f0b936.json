@@ -1,0 +1,13 @@
+{
+ "id": "p022",
+ "sha256": "cef451f0b9366b5769e9f8d67310d2df867be0e8fec89f9f0a96473d661c69e5",
+ "text": "Help her! What's in this can?",
+ "audio_s": 2.223,
+ "end_of_speech_s": 2.16,
+ "speech_dbfs": -26.42,
+ "final_after_eos_ms": 183.8,
+ "first_partial_ms": 591.7,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

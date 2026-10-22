@@ -1,0 +1,13 @@
+{
+ "id": "p065",
+ "sha256": "c4d5911e941892abf20a29d0dc916648a6bccedc5e427688a9863bad5763e542",
+ "text": "Tell me what I'm holding.",
+ "audio_s": 1.857,
+ "end_of_speech_s": 1.74,
+ "speech_dbfs": -24.59,
+ "final_after_eos_ms": 222.7,
+ "first_partial_ms": 631.6,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

@@ -1,0 +1,13 @@
+{
+ "id": "p046",
+ "sha256": "07afd453bd17c17f231c57dd39603642ed52b4ae8fa020537c2a16d3ca1f7897",
+ "text": "How long do I boil an egg for salt?",
+ "audio_s": 4.414,
+ "end_of_speech_s": 4.29,
+ "speech_dbfs": -24.54,
+ "final_after_eos_ms": 245.1,
+ "first_partial_ms": 1430.6,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

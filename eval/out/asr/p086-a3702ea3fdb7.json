@@ -1,0 +1,13 @@
+{
+ "id": "p086",
+ "sha256": "a3702ea3fdb793df27f6ea333dc4fa4c697b9a6a216279e35144e3586e637a82",
+ "text": "Read me the dosage on this bottle.",
+ "audio_s": 3.329,
+ "end_of_speech_s": 3.21,
+ "speech_dbfs": -23.74,
+ "final_after_eos_ms": 265.8,
+ "first_partial_ms": 1114.8,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

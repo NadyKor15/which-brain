@@ -1,0 +1,13 @@
+{
+ "id": "p054",
+ "sha256": "7894944e7a69325df5f79d51b5c07732394c454f7358b5e2f3a3b409d9719111",
+ "text": "Is it safe to leave butter out overnight.",
+ "audio_s": 3.999,
+ "end_of_speech_s": 3.87,
+ "speech_dbfs": -23.89,
+ "final_after_eos_ms": 243.5,
+ "first_partial_ms": 625.4,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

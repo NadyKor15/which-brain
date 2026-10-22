@@ -1,0 +1,13 @@
+{
+ "id": "p106",
+ "sha256": "ad5de80956aa43e95b65e91f48cc5bc77926327f6e2d284abc1c8a8675625ddc",
+ "text": "Penny chooses a solo them.",
+ "audio_s": 2.715,
+ "end_of_speech_s": 2.58,
+ "speech_dbfs": -21.49,
+ "final_after_eos_ms": 341.9,
+ "first_partial_ms": 1094.8,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

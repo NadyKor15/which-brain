@@ -1,0 +1,13 @@
+{
+ "id": "p024",
+ "sha256": "f5595d6a945e8a4fea83b1ff21fc556fc255d133a1f7a8de9d0de542b2f9e004",
+ "text": "Helper! How long do I boil this?",
+ "audio_s": 2.655,
+ "end_of_speech_s": 2.61,
+ "speech_dbfs": -24.92,
+ "final_after_eos_ms": 154.2,
+ "first_partial_ms": 629.6,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

@@ -1,0 +1,13 @@
+{
+ "id": "p029",
+ "sha256": "161591b748ee650a2d1942bb766981cc8e959a64540d26954c23c1dbf209c196",
+ "text": "What does this say? I can't see it, love.",
+ "audio_s": 3.058,
+ "end_of_speech_s": 2.94,
+ "speech_dbfs": -25.58,
+ "final_after_eos_ms": 221.2,
+ "first_partial_ms": 727.1,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

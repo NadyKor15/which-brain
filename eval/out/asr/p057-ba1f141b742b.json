@@ -1,0 +1,13 @@
+{
+ "id": "p057",
+ "sha256": "ba1f141b742b174ae08f41024c9e765c3a446b786417dc2a087dd8140b4c076b",
+ "text": "What's in this box?",
+ "audio_s": 1.708,
+ "end_of_speech_s": 1.68,
+ "speech_dbfs": -24.21,
+ "final_after_eos_ms": 216.9,
+ "first_partial_ms": 608.2,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

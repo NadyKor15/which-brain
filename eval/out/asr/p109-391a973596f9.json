@@ -1,0 +1,13 @@
+{
+ "id": "p109",
+ "sha256": "391a973596f9c42ed82ea887c855a016003ae55770d0bdf7d37be405f28a342c",
+ "text": "It is OK for my mom to take.",
+ "audio_s": 2.719,
+ "end_of_speech_s": 2.58,
+ "speech_dbfs": -20.77,
+ "final_after_eos_ms": 284.4,
+ "first_partial_ms": 629.9,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

@@ -1,0 +1,13 @@
+{
+ "id": "p050",
+ "sha256": "2584d126aaf28302740737e14b3b636577ae7df3845fd1efedbeafb39fc0deb1",
+ "text": "What's a substitute for one egg?",
+ "audio_s": 3.04,
+ "end_of_speech_s": 2.91,
+ "speech_dbfs": -24.33,
+ "final_after_eos_ms": 277.1,
+ "first_partial_ms": 628.3,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

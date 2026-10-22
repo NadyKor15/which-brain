@@ -1,0 +1,13 @@
+{
+ "id": "p036",
+ "sha256": "f0f073801c69e10a0c7a26fc979d74eadf64275b19c736d79524fe64b265a79b",
+ "text": "Helper, read me the ingredients.",
+ "audio_s": 2.763,
+ "end_of_speech_s": 2.67,
+ "speech_dbfs": -24.31,
+ "final_after_eos_ms": 196.8,
+ "first_partial_ms": 619.8,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

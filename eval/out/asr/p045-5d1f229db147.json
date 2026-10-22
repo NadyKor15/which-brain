@@ -1,0 +1,13 @@
+{
+ "id": "p045",
+ "sha256": "5d1f229db147272599712ff12a3b3533c8b0d67d9575e3e21d0945f46250feed",
+ "text": "Convert 350 \u00b0F to Celsius.",
+ "audio_s": 4.238,
+ "end_of_speech_s": 4.11,
+ "speech_dbfs": -24.73,
+ "final_after_eos_ms": 223.8,
+ "first_partial_ms": 648.1,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

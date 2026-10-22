@@ -1,0 +1,13 @@
+{
+ "id": "p111",
+ "sha256": "12c34148204a514b277937d0cb4ceb44d7dc9db41b347a787eb0f8218c652e91",
+ "text": "The receipt says take 2 eggs. How many do I have left in this carton?",
+ "audio_s": 5.599,
+ "end_of_speech_s": 5.46,
+ "speech_dbfs": -18.74,
+ "final_after_eos_ms": 202.1,
+ "first_partial_ms": 1217.9,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

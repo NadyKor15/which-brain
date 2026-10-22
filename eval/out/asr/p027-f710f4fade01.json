@@ -1,0 +1,13 @@
+{
+ "id": "p027",
+ "sha256": "f710f4fade010f375ac7f24617add04070107ed784c8a798d94e387adb71b55f",
+ "text": "Can you set a timer for 10 minutes sweetie?",
+ "audio_s": 2.627,
+ "end_of_speech_s": 2.49,
+ "speech_dbfs": -27.0,
+ "final_after_eos_ms": 263.2,
+ "first_partial_ms": 623.1,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

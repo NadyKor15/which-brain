@@ -1,0 +1,13 @@
+{
+ "id": "p049",
+ "sha256": "3e1906a7dc678207e1affefeb8fa9a5e86f3aace52171aa260cfb9c813f2b261",
+ "text": "Can I freeze cooked rice?",
+ "audio_s": 2.198,
+ "end_of_speech_s": 2.19,
+ "speech_dbfs": -24.17,
+ "final_after_eos_ms": 52.6,
+ "first_partial_ms": 589.9,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

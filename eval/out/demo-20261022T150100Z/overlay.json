@@ -1,0 +1,467 @@
+[
+ {
+  "id": "p056",
+  "script": "What's in this can?",
+  "heard": "What's in this can?",
+  "speaker_role": "cook",
+  "near_mic": true,
+  "decider": {
+   "addressed": 0.75,
+   "medicine": 0.0747,
+   "brain": {
+    "quiet_answer": 0.0449,
+    "look": 0.7951,
+    "read_closely": 0.0241,
+    "ask_human": 0.1358
+   },
+   "brain_top": "look",
+   "brain_conf": 0.7269
+  },
+  "frame": {
+   "frame": {
+    "clear": 0.6295,
+    "partly": 0.3261,
+    "unreadable": 0.0443
+   },
+   "item_medicine": 0.0353
+  },
+  "action": "answer",
+  "brain_badge": "look",
+  "model": "lite",
+  "verdict": "hedge",
+  "earcon": "looking",
+  "model_answer": "Tomato soup, condensed.",
+  "said": "I think tomato soup, condensed.",
+  "timing_ms": {
+   "transcribe_final_after_speech": 157.9,
+   "agent_ms": 1587.7,
+   "text_decider_ms": 508.58808401972055,
+   "text_decider_server_ms": 474.18,
+   "decided_ms": 509.0,
+   "frame_decider_ms": 546.4090839959681,
+   "frame_decider_server_ms": 530.1,
+   "first_token_ms": 1548.9,
+   "ready_ms": 1587.7,
+   "polly_first_byte": 254.3
+  },
+  "usd": 0.000139,
+  "measured_at": "2026-10-22T15:01:02Z"
+ },
+ {
+  "id": "p002",
+  "script": "Can I have a cookie now?",
+  "heard": "Can I have a cookie now.",
+  "speaker_role": "child (or adult reading)",
+  "near_mic": false,
+  "decider": {},
+  "frame": {},
+  "action": "silent",
+  "brain_badge": null,
+  "model": null,
+  "verdict": null,
+  "earcon": null,
+  "model_answer": null,
+  "said": null,
+  "timing_ms": {
+   "transcribe_final_after_speech": 81.9,
+   "agent_ms": 0.3,
+   "text_decider_ms": null,
+   "text_decider_server_ms": null,
+   "decided_ms": 0.2,
+   "ready_ms": 0.2,
+   "polly_first_byte": null
+  },
+  "usd": 0,
+  "measured_at": "2026-10-22T15:01:02Z"
+ },
+ {
+  "id": "p009",
+  "script": "Preheat your oven to three hundred fifty degrees and grease the pan.",
+  "heard": "Preheat your oven to 350 degrees and grease the pan.",
+  "speaker_role": "radio/TV (synthetic, labelled)",
+  "near_mic": false,
+  "decider": {},
+  "frame": {},
+  "action": "silent",
+  "brain_badge": null,
+  "model": null,
+  "verdict": null,
+  "earcon": null,
+  "model_answer": null,
+  "said": null,
+  "timing_ms": {
+   "transcribe_final_after_speech": 547.0,
+   "agent_ms": 0.2,
+   "text_decider_ms": null,
+   "text_decider_server_ms": null,
+   "decided_ms": 0.1,
+   "ready_ms": 0.1,
+   "polly_first_byte": null
+  },
+  "usd": 0,
+  "measured_at": "2026-10-22T15:01:02Z"
+ },
+ {
+  "id": "p018",
+  "script": "Honey, can you pass me the salt?",
+  "heard": "Honey, can you pass me the salt?",
+  "speaker_role": "cook to someone else",
+  "near_mic": true,
+  "decider": {
+   "addressed": 0.4726,
+   "medicine": 0.0285,
+   "brain": {
+    "quiet_answer": 0.1907,
+    "look": 0.0974,
+    "read_closely": 0.0365,
+    "ask_human": 0.6754
+   },
+   "brain_top": "ask_human",
+   "brain_conf": 0.5672
+  },
+  "frame": {},
+  "action": "ask",
+  "brain_badge": null,
+  "model": null,
+  "verdict": null,
+  "earcon": "heard",
+  "model_answer": null,
+  "said": "Did you ask me?",
+  "timing_ms": {
+   "transcribe_final_after_speech": 131.5,
+   "agent_ms": 366.1,
+   "text_decider_ms": 365.7199579756707,
+   "text_decider_server_ms": 347.75,
+   "decided_ms": 365.9,
+   "ready_ms": 365.9,
+   "polly_first_byte": 65.0
+  },
+  "usd": 0,
+  "measured_at": "2026-10-22T15:01:02Z"
+ },
+ {
+  "id": "p096",
+  "script": "Is this the little white one I take at night?",
+  "heard": "Is this the little white one I take at night?",
+  "speaker_role": "cook",
+  "near_mic": true,
+  "decider": {
+   "addressed": 0.4687,
+   "medicine": 0.1183,
+   "brain": {
+    "quiet_answer": 0.1381,
+    "look": 0.6102,
+    "read_closely": 0.0166,
+    "ask_human": 0.2351
+   },
+   "brain_top": "look",
+   "brain_conf": 0.4802
+  },
+  "frame": {},
+  "action": "ask",
+  "brain_badge": null,
+  "model": null,
+  "verdict": null,
+  "earcon": "heard",
+  "model_answer": null,
+  "said": "Did you ask me?",
+  "timing_ms": {
+   "transcribe_final_after_speech": 174.8,
+   "agent_ms": 347.5,
+   "text_decider_ms": 347.0430409652181,
+   "text_decider_server_ms": 336.03,
+   "decided_ms": 347.3,
+   "ready_ms": 347.3,
+   "polly_first_byte": 62.7
+  },
+  "usd": 0,
+  "measured_at": "2026-10-22T15:01:03Z"
+ },
+ {
+  "id": "p096-after-yes",
+  "script": "Is this the little white one I take at night?",
+  "heard": "Is this the little white one I take at night?",
+  "speaker_role": "cook",
+  "near_mic": true,
+  "decider": {
+   "addressed": 1.0,
+   "medicine": 0.1183,
+   "brain": {
+    "quiet_answer": 0.1381,
+    "look": 0.6102,
+    "read_closely": 0.0166,
+    "ask_human": 0.2351
+   },
+   "brain_top": "look",
+   "brain_conf": 0.4802
+  },
+  "frame": {},
+  "action": "refuse",
+  "brain_badge": null,
+  "model": null,
+  "verdict": null,
+  "earcon": "heard",
+  "model_answer": null,
+  "said": "I won't guess on medicine. Want me to call your helper?",
+  "timing_ms": {
+   "transcribe_final_after_speech": 174.8,
+   "agent_ms": 325.5,
+   "text_decider_ms": 324.8181249946356,
+   "text_decider_server_ms": 314.08,
+   "decided_ms": 325.2,
+   "ready_ms": 325.2,
+   "polly_first_byte": 98.8
+  },
+  "usd": 0,
+  "measured_at": "2026-10-22T15:01:03Z"
+ },
+ {
+  "id": "p081",
+  "script": "Is this my blood pressure pill?",
+  "heard": "Is this my blood pressure pill?",
+  "speaker_role": "cook",
+  "near_mic": true,
+  "decider": {
+   "addressed": 0.6227,
+   "medicine": 0.7786,
+   "brain": {
+    "quiet_answer": 0.0681,
+    "look": 0.2544,
+    "read_closely": 0.0162,
+    "ask_human": 0.6613
+   },
+   "brain_top": "ask_human",
+   "brain_conf": 0.5484
+  },
+  "frame": {},
+  "action": "refuse",
+  "brain_badge": null,
+  "model": null,
+  "verdict": null,
+  "earcon": "heard",
+  "model_answer": null,
+  "said": "I won't guess on medicine. Want me to call your helper?",
+  "timing_ms": {
+   "transcribe_final_after_speech": 236.7,
+   "agent_ms": 350.0,
+   "text_decider_ms": 349.4324160274118,
+   "text_decider_server_ms": 339.26,
+   "decided_ms": 349.7,
+   "ready_ms": 349.7,
+   "polly_first_byte": 106.1
+  },
+  "usd": 0,
+  "measured_at": "2026-10-22T15:01:04Z"
+ },
+ {
+  "id": "p077",
+  "script": "Read me the best before date.",
+  "heard": "Read me the best before date.",
+  "speaker_role": "cook",
+  "near_mic": true,
+  "decider": {
+   "addressed": 0.6287,
+   "medicine": 0.0903,
+   "brain": {
+    "quiet_answer": 0.1094,
+    "look": 0.0684,
+    "read_closely": 0.758,
+    "ask_human": 0.0642
+   },
+   "brain_top": "read_closely",
+   "brain_conf": 0.6773
+  },
+  "frame": {
+   "frame": {
+    "clear": 0.4409,
+    "partly": 0.4612,
+    "unreadable": 0.0979
+   },
+   "item_medicine": 0.2589
+  },
+  "action": "answer",
+  "brain_badge": "read_closely",
+  "model": "pro",
+  "verdict": "hedge",
+  "earcon": "reading",
+  "model_answer": "The best before date is March 5, 2028.",
+  "said": "I can't read it yet. Hold it a bit closer.",
+  "timing_ms": {
+   "transcribe_final_after_speech": 144.1,
+   "agent_ms": 1759.8,
+   "text_decider_ms": 352.06008300883695,
+   "text_decider_server_ms": 339.74,
+   "decided_ms": 352.3,
+   "frame_decider_ms": 563.9087079907767,
+   "frame_decider_server_ms": 549.63,
+   "first_token_ms": 1620.0,
+   "ready_ms": 1759.9,
+   "polly_first_byte": 62.6
+  },
+  "usd": 0.0018848,
+  "measured_at": "2026-10-22T15:01:06Z"
+ },
+ {
+  "id": "p116",
+  "script": "What's in this can?",
+  "heard": "What in this can?",
+  "speaker_role": "cook",
+  "near_mic": true,
+  "decider": {
+   "addressed": 0.5184,
+   "medicine": 0.11,
+   "brain": {
+    "quiet_answer": 0.1852,
+    "look": 0.1359,
+    "read_closely": 0.0678,
+    "ask_human": 0.6111
+   },
+   "brain_top": "ask_human",
+   "brain_conf": 0.4815
+  },
+  "frame": {},
+  "action": "refuse",
+  "brain_badge": null,
+  "model": null,
+  "verdict": null,
+  "earcon": "heard",
+  "model_answer": null,
+  "said": "I won't guess on medicine. Want me to call your helper?",
+  "timing_ms": {
+   "transcribe_final_after_speech": 196.6,
+   "agent_ms": 375.2,
+   "text_decider_ms": 374.5569589664228,
+   "text_decider_server_ms": 363.88,
+   "decided_ms": 374.9,
+   "ready_ms": 374.9,
+   "polly_first_byte": 63.6
+  },
+  "usd": 0,
+  "measured_at": "2026-10-22T15:01:06Z"
+ },
+ {
+  "id": "p117",
+  "script": "What does this box say?",
+  "heard": "What does this box say?",
+  "speaker_role": "cook",
+  "near_mic": true,
+  "decider": {
+   "addressed": 0.7941,
+   "medicine": 0.0888,
+   "brain": {
+    "quiet_answer": 0.0183,
+    "look": 0.8732,
+    "read_closely": 0.0715,
+    "ask_human": 0.037
+   },
+   "brain_top": "look",
+   "brain_conf": 0.8309
+  },
+  "frame": {},
+  "action": "answer",
+  "brain_badge": null,
+  "model": null,
+  "verdict": "gate:blurred",
+  "earcon": "heard",
+  "model_answer": null,
+  "said": "Hold it up to the camera.",
+  "timing_ms": {
+   "transcribe_final_after_speech": 250.9,
+   "agent_ms": 456.6,
+   "text_decider_ms": 347.9292090050876,
+   "text_decider_server_ms": 337.83,
+   "decided_ms": 348.2,
+   "ready_ms": 348.2,
+   "polly_first_byte": 66.6
+  },
+  "usd": 0,
+  "measured_at": "2026-10-22T15:01:07Z"
+ },
+ {
+  "id": "p051",
+  "script": "How many ounces in a pound?",
+  "heard": "How many ounces in a pound?",
+  "speaker_role": "cook",
+  "near_mic": true,
+  "decider": {
+   "addressed": 0.8137,
+   "medicine": 0.0579,
+   "brain": {
+    "quiet_answer": 0.9828,
+    "look": 0.005,
+    "read_closely": 0.0031,
+    "ask_human": 0.0091
+   },
+   "brain_top": "quiet_answer",
+   "brain_conf": 0.977
+  },
+  "frame": {},
+  "action": "answer",
+  "brain_badge": "quiet_answer",
+  "model": "micro",
+  "verdict": null,
+  "earcon": "heard",
+  "model_answer": "There are 16 ounces in a pound.",
+  "said": "There are 16 ounces in a pound.",
+  "timing_ms": {
+   "transcribe_final_after_speech": 168.4,
+   "agent_ms": 746.1,
+   "text_decider_ms": 344.5397919858806,
+   "text_decider_server_ms": 335.02,
+   "decided_ms": 344.8,
+   "first_token_ms": 723.1,
+   "ready_ms": 746.3,
+   "polly_first_byte": 66.2
+  },
+  "usd": 5.5e-06,
+  "measured_at": "2026-10-22T15:01:07Z"
+ },
+ {
+  "id": "p062",
+  "script": "What's this bag?",
+  "heard": "What's this bag?",
+  "speaker_role": "cook",
+  "near_mic": true,
+  "decider": {
+   "addressed": 0.6433,
+   "medicine": 0.0595,
+   "brain": {
+    "quiet_answer": 0.0431,
+    "look": 0.82,
+    "read_closely": 0.0108,
+    "ask_human": 0.1261
+   },
+   "brain_top": "look",
+   "brain_conf": 0.76
+  },
+  "frame": {
+   "frame": {
+    "clear": 0.9381,
+    "partly": 0.045,
+    "unreadable": 0.0169
+   },
+   "item_medicine": 0.0316
+  },
+  "action": "answer",
+  "brain_badge": "look",
+  "model": "lite",
+  "verdict": "plain",
+  "earcon": "looking",
+  "model_answer": "White Rice Extra Long Grain",
+  "said": "White Rice Extra Long Grain",
+  "timing_ms": {
+   "transcribe_final_after_speech": 242.0,
+   "agent_ms": 1301.7,
+   "text_decider_ms": 351.5380420139991,
+   "text_decider_server_ms": 339.14,
+   "decided_ms": 352.0,
+   "frame_decider_ms": 512.5561659806408,
+   "frame_decider_server_ms": 500.91,
+   "first_token_ms": 1210.0,
+   "ready_ms": 1301.8,
+   "polly_first_byte": 66.8
+  },
+  "usd": 0.0001389,
+  "measured_at": "2026-10-22T15:01:09Z"
+ }
+]

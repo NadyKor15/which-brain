@@ -1,0 +1,13 @@
+{
+ "id": "p075",
+ "sha256": "bcaebd5c31a034527dcbbb71f0f8d636d06ca8cf01b2901279a017211a52f89b",
+ "text": "How much water do I add?",
+ "audio_s": 2.82,
+ "end_of_speech_s": 2.76,
+ "speech_dbfs": -24.23,
+ "final_after_eos_ms": 252.8,
+ "first_partial_ms": 1286.8,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

@@ -1,0 +1,13 @@
+{
+ "id": "p101",
+ "sha256": "487beb967510a0c6b651376267a34eb65f6ec9d85e502dfe9146389f1d25511f",
+ "text": "Is this the stuff the doctor gave me?",
+ "audio_s": 3.511,
+ "end_of_speech_s": 3.39,
+ "speech_dbfs": -22.78,
+ "final_after_eos_ms": 264.0,
+ "first_partial_ms": 614.7,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

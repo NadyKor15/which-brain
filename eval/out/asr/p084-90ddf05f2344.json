@@ -1,0 +1,13 @@
+{
+ "id": "p084",
+ "sha256": "90ddf05f2344f43de382fcc1c2f9a67578174c081f543e0338e3910cb4e8a0c1",
+ "text": "Can I take this pill with food?",
+ "audio_s": 2.634,
+ "end_of_speech_s": 2.49,
+ "speech_dbfs": -22.82,
+ "final_after_eos_ms": 235.6,
+ "first_partial_ms": 619.1,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

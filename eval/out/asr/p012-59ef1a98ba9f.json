@@ -1,0 +1,13 @@
+{
+ "id": "p012",
+ "sha256": "59ef1a98ba9f9c007d4b1d4d4991c7ad702ee8772ca6bd67c7a4ef98efae58fa",
+ "text": "2 tablespoons of olive oil and we're ready.",
+ "audio_s": 3.35,
+ "end_of_speech_s": 2.58,
+ "speech_dbfs": -39.15,
+ "final_after_eos_ms": 607.7,
+ "first_partial_ms": 1000.0,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

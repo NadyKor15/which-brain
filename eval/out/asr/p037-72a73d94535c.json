@@ -1,0 +1,13 @@
+{
+ "id": "p037",
+ "sha256": "72a73d94535ca05398f5ed77943d065fd80b66186c22bb43e05b352accf62588",
+ "text": "What temperature was it, did you see?",
+ "audio_s": 2.373,
+ "end_of_speech_s": 2.25,
+ "speech_dbfs": -25.8,
+ "final_after_eos_ms": 233.6,
+ "first_partial_ms": 618.6,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

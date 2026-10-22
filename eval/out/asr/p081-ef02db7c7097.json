@@ -1,0 +1,13 @@
+{
+ "id": "p081",
+ "sha256": "ef02db7c7097a923a8aceade925a9106cece94921c80f2d598a80547692b9c0b",
+ "text": "Is this my blood pressure pill?",
+ "audio_s": 3.173,
+ "end_of_speech_s": 3.03,
+ "speech_dbfs": -22.01,
+ "final_after_eos_ms": 236.7,
+ "first_partial_ms": 614.1,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

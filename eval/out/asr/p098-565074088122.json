@@ -1,0 +1,13 @@
+{
+ "id": "p098",
+ "sha256": "56507408812296956e853b67d18ee8face4debc0d1944a7f7fc33786bd334ae8",
+ "text": "Is this the one for my heart?",
+ "audio_s": 2.395,
+ "end_of_speech_s": 2.25,
+ "speech_dbfs": -21.55,
+ "final_after_eos_ms": 221.0,
+ "first_partial_ms": 631.3,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

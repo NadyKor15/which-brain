@@ -1,0 +1,13 @@
+{
+ "id": "p023",
+ "sha256": "ed77d4eed967f1c5db929591af65845a1978066d51d18cdd29db008cbd9f6286",
+ "text": "How long do I boil this? Do you remember?",
+ "audio_s": 2.714,
+ "end_of_speech_s": 2.58,
+ "speech_dbfs": -25.79,
+ "final_after_eos_ms": 281.2,
+ "first_partial_ms": 631.1,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

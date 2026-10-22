@@ -1,0 +1,13 @@
+{
+ "id": "p118",
+ "sha256": "354f310f3ec37a3eb7d477933913bed21344dd32237727d7d6c45dc7e6de3f2c",
+ "text": "Is this the soup?",
+ "audio_s": 1.506,
+ "end_of_speech_s": 1.26,
+ "speech_dbfs": -19.42,
+ "final_after_eos_ms": 412.5,
+ "first_partial_ms": 597.6,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

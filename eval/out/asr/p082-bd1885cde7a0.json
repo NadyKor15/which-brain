@@ -1,0 +1,13 @@
+{
+ "id": "p082",
+ "sha256": "bd1885cde7a02fb0d28412b61b43da83476322ae2f4b72b3cc6f87916762a7a8",
+ "text": "How many of these tablets do I take?",
+ "audio_s": 3.143,
+ "end_of_speech_s": 3.03,
+ "speech_dbfs": -21.79,
+ "final_after_eos_ms": 196.3,
+ "first_partial_ms": 605.1,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

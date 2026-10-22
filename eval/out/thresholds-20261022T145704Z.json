@@ -1,0 +1,20 @@
+{
+ "text": {
+  "addressed_yes": 0.5,
+  "addressed_no": 0.3,
+  "medicine_tau": 0.2,
+  "brain_sure": 0.5
+ },
+ "near_mic": {
+  "addressed_yes": 0.5,
+  "addressed_no": 0.4,
+  "medicine_tau": 0.15,
+  "brain_sure": 0.5
+ },
+ "near_mic_code": {
+  "addressed_yes": 0.5,
+  "addressed_no": 0.2,
+  "medicine_tau": 0.2,
+  "brain_sure": 0.5
+ }
+}

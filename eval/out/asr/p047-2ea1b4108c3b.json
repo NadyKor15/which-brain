@@ -1,0 +1,13 @@
+{
+ "id": "p047",
+ "sha256": "2ea1b4108c3bc188e04b4eb473c85245051f149f1567fb5ba08dd2dce56a077b",
+ "text": "What's 1/2 of 3/4 of a cup?",
+ "audio_s": 3.715,
+ "end_of_speech_s": 3.57,
+ "speech_dbfs": -25.32,
+ "final_after_eos_ms": 254.5,
+ "first_partial_ms": 665.0,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

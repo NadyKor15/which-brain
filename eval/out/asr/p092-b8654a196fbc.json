@@ -1,0 +1,13 @@
+{
+ "id": "p092",
+ "sha256": "b8654a196fbc42b285a7c9905071b39507faa41ece77b0c13065fbbbeba28e33",
+ "text": "How often do I take this capsule?",
+ "audio_s": 2.72,
+ "end_of_speech_s": 2.58,
+ "speech_dbfs": -23.93,
+ "final_after_eos_ms": 291.8,
+ "first_partial_ms": 601.4,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

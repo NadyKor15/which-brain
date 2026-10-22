@@ -1,0 +1,13 @@
+{
+ "id": "p035",
+ "sha256": "caeb45ba3ae079771a52b418f73c3eb839a8c4516977493e9d48ad93ea8b5a68",
+ "text": "Read me the ingredients, would you?",
+ "audio_s": 2.443,
+ "end_of_speech_s": 2.37,
+ "speech_dbfs": -25.74,
+ "final_after_eos_ms": 193.2,
+ "first_partial_ms": 617.7,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

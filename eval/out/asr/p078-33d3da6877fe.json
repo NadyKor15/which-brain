@@ -1,0 +1,13 @@
+{
+ "id": "p078",
+ "sha256": "33d3da6877fe8d84354fe501c13921c8da619b0dbf36b6a8f1e200536b70c193",
+ "text": "How many showings is this?",
+ "audio_s": 2.677,
+ "end_of_speech_s": 2.37,
+ "speech_dbfs": -21.96,
+ "final_after_eos_ms": 391.9,
+ "first_partial_ms": 651.9,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

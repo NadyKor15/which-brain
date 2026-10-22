@@ -1,0 +1,13 @@
+{
+ "id": "p091",
+ "sha256": "ab61271b2408ae1533448e6414dd3cf29ff07a0b3e9f71d1b7fbdb360ad51af8",
+ "text": "Is this the allergy medicine?",
+ "audio_s": 2.573,
+ "end_of_speech_s": 2.46,
+ "speech_dbfs": -23.19,
+ "final_after_eos_ms": 201.9,
+ "first_partial_ms": 590.0,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

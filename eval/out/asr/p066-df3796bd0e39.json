@@ -1,0 +1,13 @@
+{
+ "id": "p066",
+ "sha256": "df3796bd0e393b45b466152580b338234e8b46000ab012fea1b149dc86e527a2",
+ "text": "Is this the beans",
+ "audio_s": 1.383,
+ "end_of_speech_s": 1.38,
+ "speech_dbfs": -24.44,
+ "final_after_eos_ms": 77.7,
+ "first_partial_ms": 815.4,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

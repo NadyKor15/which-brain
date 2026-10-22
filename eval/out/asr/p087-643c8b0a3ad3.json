@@ -1,0 +1,13 @@
+{
+ "id": "p087",
+ "sha256": "643c8b0a3ad3b315e0f1f306ddabbc96bca584b80cfef02152389279d860f6f5",
+ "text": "Is it time for my insulin?",
+ "audio_s": 2.7,
+ "end_of_speech_s": 2.58,
+ "speech_dbfs": -20.54,
+ "final_after_eos_ms": 194.5,
+ "first_partial_ms": 1132.6,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

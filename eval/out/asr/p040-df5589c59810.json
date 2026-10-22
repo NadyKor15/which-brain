@@ -1,0 +1,13 @@
+{
+ "id": "p040",
+ "sha256": "df5589c59810aa220d6769374c097a4d0a54fecc9a94a92b5bcd75605997bf4e",
+ "text": "Helper, is this the salt or the sugar?",
+ "audio_s": 3.75,
+ "end_of_speech_s": 3.63,
+ "speech_dbfs": -23.57,
+ "final_after_eos_ms": 301.9,
+ "first_partial_ms": 734.1,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

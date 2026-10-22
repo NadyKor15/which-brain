@@ -1,0 +1,13 @@
+{
+ "id": "p116",
+ "sha256": "130dc721518ab2c8b3fa522f006b7d775410cff1bf3c9663352ae10b631040b4",
+ "text": "What in this can?",
+ "audio_s": 1.49,
+ "end_of_speech_s": 1.35,
+ "speech_dbfs": -18.51,
+ "final_after_eos_ms": 196.6,
+ "first_partial_ms": 629.9,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

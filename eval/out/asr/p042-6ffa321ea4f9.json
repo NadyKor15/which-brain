@@ -1,0 +1,13 @@
+{
+ "id": "p042",
+ "sha256": "6ffa321ea4f94b140d88de533d63bb822eb570dd4f378f68fd78031c3c3c0196",
+ "text": "How many grams in a cup of flour?",
+ "audio_s": 3.517,
+ "end_of_speech_s": 3.45,
+ "speech_dbfs": -25.28,
+ "final_after_eos_ms": 165.1,
+ "first_partial_ms": 614.8,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

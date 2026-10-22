@@ -1,0 +1,13 @@
+{
+ "id": "p030",
+ "sha256": "38ea492d35edde88e055eefeeab051350221957ca341a276046daf95ba09db10",
+ "text": "Helper, what does this say?",
+ "audio_s": 2.727,
+ "end_of_speech_s": 2.61,
+ "speech_dbfs": -24.56,
+ "final_after_eos_ms": 237.8,
+ "first_partial_ms": 636.2,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

@@ -1,0 +1,13 @@
+{
+ "id": "p090",
+ "sha256": "2a703f86e8f5729981b30cf6cee1e6e14322b4b48c6f64f0b68ad3d286ffac0f",
+ "text": "What's this supplement?",
+ "audio_s": 1.806,
+ "end_of_speech_s": 1.77,
+ "speech_dbfs": -23.65,
+ "final_after_eos_ms": 168.8,
+ "first_partial_ms": 665.9,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

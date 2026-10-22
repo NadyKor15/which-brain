@@ -1,0 +1,13 @@
+{
+ "id": "p055",
+ "sha256": "b491335c67ddfbac2024dab4117cc2697c57e35212311156dad072b8cdf746be",
+ "text": "Double this, 2/3 of a cup.",
+ "audio_s": 3.427,
+ "end_of_speech_s": 3.3,
+ "speech_dbfs": -22.32,
+ "final_after_eos_ms": 237.3,
+ "first_partial_ms": 728.8,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

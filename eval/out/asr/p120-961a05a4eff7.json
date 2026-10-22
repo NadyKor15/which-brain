@@ -1,0 +1,13 @@
+{
+ "id": "p120",
+ "sha256": "961a05a4eff7cc8a210d5730800f2f0acfa58adf6babf57405f191da5a83e94d",
+ "text": "What am I holding?",
+ "audio_s": 2.3,
+ "end_of_speech_s": 1.44,
+ "speech_dbfs": -22.61,
+ "final_after_eos_ms": 995.1,
+ "first_partial_ms": 604.9,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

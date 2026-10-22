@@ -1,0 +1,13 @@
+{
+ "id": "p089",
+ "sha256": "fac5be1498bd6e02fe49ea9b3213dc5b813f60d6dfaee73e27278ae9e2b8a9e6",
+ "text": "Can I take 2 of these painkillers?",
+ "audio_s": 3.561,
+ "end_of_speech_s": 3.48,
+ "speech_dbfs": -23.74,
+ "final_after_eos_ms": 146.0,
+ "first_partial_ms": 644.0,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

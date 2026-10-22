@@ -1,0 +1,13 @@
+{
+ "id": "p033",
+ "sha256": "46e06bcb7d65046ed52ecc3c2a451c34e1378f00669c1413ac3d3404b5da1c94",
+ "text": "Which one is the sugar, the left one?",
+ "audio_s": 3.408,
+ "end_of_speech_s": 3.3,
+ "speech_dbfs": -27.08,
+ "final_after_eos_ms": 263.2,
+ "first_partial_ms": 1130.1,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

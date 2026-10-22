@@ -1,0 +1,13 @@
+{
+ "id": "p015",
+ "sha256": "a53408aa88abdf48d538f83011c746f204adc8335bb402be0c1612b374c8fd90",
+ "text": "Can you read me that label that you have? A second.",
+ "audio_s": 4.381,
+ "end_of_speech_s": 4.35,
+ "speech_dbfs": -35.82,
+ "final_after_eos_ms": 77.8,
+ "first_partial_ms": 716.5,
+ "segments": 2,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

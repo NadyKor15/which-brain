@@ -1,0 +1,13 @@
+{
+ "id": "p017",
+ "sha256": "1266aeb3377121f58075fdacb5e20d49327e8b3ce93bb12d7dde48a7dbd7e422",
+ "text": "I have set the table.",
+ "audio_s": 1.478,
+ "end_of_speech_s": 1.47,
+ "speech_dbfs": -37.27,
+ "final_after_eos_ms": 87.9,
+ "first_partial_ms": 864.8,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

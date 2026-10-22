@@ -1,0 +1,13 @@
+{
+ "id": "p010",
+ "sha256": "8e52614954d59cc8ad40683b3376acf333bde2c923f6b06bb2a30fab8c4e1882",
+ "text": "Ask your doctor if this medicine is right for you.",
+ "audio_s": 3.163,
+ "end_of_speech_s": 2.46,
+ "speech_dbfs": -41.67,
+ "final_after_eos_ms": 571.1,
+ "first_partial_ms": 930.4,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

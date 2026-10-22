@@ -1,0 +1,13 @@
+{
+ "id": "p103",
+ "sha256": "35dbef8f97f4c60fe00696a16ddf0ac8d3bbbc52eb4d0a177087a6951e623d32",
+ "text": "How many of the round ones today?",
+ "audio_s": 2.957,
+ "end_of_speech_s": 2.85,
+ "speech_dbfs": -23.56,
+ "final_after_eos_ms": 178.6,
+ "first_partial_ms": 625.2,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

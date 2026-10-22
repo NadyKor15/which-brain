@@ -1,0 +1,13 @@
+{
+ "id": "p011",
+ "sha256": "490f22484faa9f511b53beb0fa66a2b83d15a80e4ba37807e028999230521b0b",
+ "text": "What's in the box? Find out after the break.",
+ "audio_s": 3.493,
+ "end_of_speech_s": 2.7,
+ "speech_dbfs": -39.78,
+ "final_after_eos_ms": 651.7,
+ "first_partial_ms": 918.5,
+ "segments": 2,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

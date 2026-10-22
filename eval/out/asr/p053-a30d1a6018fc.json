@@ -1,0 +1,13 @@
+{
+ "id": "p053",
+ "sha256": "a30d1a6018fca15b25aa98aa27fe3817f9a445c5ad4c938027611b89f1a20efe",
+ "text": "How many teaspoons in a tablespoon?",
+ "audio_s": 3.745,
+ "end_of_speech_s": 3.66,
+ "speech_dbfs": -25.69,
+ "final_after_eos_ms": 205.6,
+ "first_partial_ms": 1236.5,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

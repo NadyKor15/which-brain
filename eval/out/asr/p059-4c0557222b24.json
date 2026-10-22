@@ -1,0 +1,13 @@
+{
+ "id": "p059",
+ "sha256": "4c0557222b24e7372d3f0da0e5934591ceaf4f815444ab49afdebbe3f6ddee01",
+ "text": "What's this jar?",
+ "audio_s": 1.583,
+ "end_of_speech_s": 1.53,
+ "speech_dbfs": -27.49,
+ "final_after_eos_ms": 142.7,
+ "first_partial_ms": 608.8,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

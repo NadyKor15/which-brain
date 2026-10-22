@@ -1,0 +1,13 @@
+{
+ "id": "p114",
+ "sha256": "a9d523ac7eb15089fcd29cb5202a3205d8064f224318eb8ba04fd335122c86a9",
+ "text": "This sauce is pure medicine. What's in it?",
+ "audio_s": 3.91,
+ "end_of_speech_s": 3.75,
+ "speech_dbfs": -17.79,
+ "final_after_eos_ms": 312.1,
+ "first_partial_ms": 669.7,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

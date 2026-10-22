@@ -1,0 +1,13 @@
+{
+ "id": "p094",
+ "sha256": "f74eadfc9b3c63dd38cf78399802cc7d41b72660f059b394ff81dea5b85a7158",
+ "text": "Is this bill the same as yesterday's?",
+ "audio_s": 3.067,
+ "end_of_speech_s": 2.94,
+ "speech_dbfs": -22.04,
+ "final_after_eos_ms": 213.5,
+ "first_partial_ms": 612.6,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

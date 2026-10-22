@@ -1,0 +1,13 @@
+{
+ "id": "p115",
+ "sha256": "595c28931d55b85e77eb7e4fbf8c0fc17d17e40a09091927dbf11565397445a7",
+ "text": "Take 2 cups of flour. How many grams is that?",
+ "audio_s": 4.372,
+ "end_of_speech_s": 4.23,
+ "speech_dbfs": -18.9,
+ "final_after_eos_ms": 217.3,
+ "first_partial_ms": 784.4,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

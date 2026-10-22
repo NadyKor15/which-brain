@@ -1,0 +1,13 @@
+{
+ "id": "p038",
+ "sha256": "1d41e3d28835742b5da5c42622922267f9c0d408512acb446a6584953e81c1be",
+ "text": "Helper, what temperature does it say?",
+ "audio_s": 2.913,
+ "end_of_speech_s": 2.79,
+ "speech_dbfs": -24.85,
+ "final_after_eos_ms": 267.0,
+ "first_partial_ms": 724.8,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

@@ -1,0 +1,13 @@
+{
+ "id": "p044",
+ "sha256": "73688e973338f1df911e7db04aefffa704d3105cdec7814645db2b06b556b0b3",
+ "text": "How many tablespoons in 1/4 cup.",
+ "audio_s": 4.263,
+ "end_of_speech_s": 4.14,
+ "speech_dbfs": -26.57,
+ "final_after_eos_ms": 243.8,
+ "first_partial_ms": 609.9,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

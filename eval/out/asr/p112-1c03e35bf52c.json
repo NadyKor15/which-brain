@@ -1,0 +1,13 @@
+{
+ "id": "p112",
+ "sha256": "1c03e35bf52c3516a5ea496843f40d47e7cf6672251ac79921224a7438fd0c14",
+ "text": "A pinch of salt is my medicine. How much salt is in this?",
+ "audio_s": 4.589,
+ "end_of_speech_s": 4.44,
+ "speech_dbfs": -19.83,
+ "final_after_eos_ms": 211.8,
+ "first_partial_ms": 698.6,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}
