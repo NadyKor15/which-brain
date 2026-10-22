@@ -4,7 +4,7 @@
 
 A hands-free kitchen helper for people who can't read a label. The phone is worn on the chest. For every phrase it hears, Strands Decider 2B decides whether the phrase was meant for the helper, whether it is about medicine, and which Amazon Nova model on Bedrock should answer: a quick one, one that looks at the label, or one that reads closely. On medicine it never guesses: it offers to call a person.
 
-Built for the AWS Builder Center "Agent Experience Hackathon: Strands Decider" (#strands-decider-2b, #model-routing). Video: https://youtu.be/i2zDhHCCboc
+Built for the AWS Builder Center "Agent Experience Hackathon: Strands Decider" (#strands-decider-2b, #model-routing). Article: https://builder.aws.com/content/3L3jK6OPyVrny5RUyjkUW83DKNP/which-brain-a-2b-decision-model-chooses-who-answers-in-my-kitchen-and-never-guesses-on-medicine · Video: https://youtu.be/i2zDhHCCboc
 
 ## Check it in 90 seconds
 
