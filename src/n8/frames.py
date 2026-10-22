@@ -8,6 +8,8 @@ ones come from the labelled frame set.
 
 from __future__ import annotations
 
+import base64
+import io
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -86,3 +88,23 @@ def sharpest(frames: list[Image.Image]) -> int | None:
         if c.ok and c.sharpness > best:
             best, best_i = c.sharpness, i
     return best_i
+
+
+BEDROCK_MAX_SIDE = 1280  # Bedrock gets the frame near full resolution; this bounds image tokens
+
+
+def jpeg(img: Image.Image, max_side: int | None = None, quality: int = 88) -> bytes:
+    if max_side is not None:
+        img = resize_for_decider(img, max_side)
+    buf = io.BytesIO()
+    img.convert("RGB").save(buf, "JPEG", quality=quality)
+    return buf.getvalue()
+
+
+def for_decider(img: Image.Image) -> str:
+    """Base64 JPEG at <= 448 px, the form Decider's ``images`` field takes."""
+    return base64.b64encode(jpeg(img, DECIDER_MAX_SIDE, 90)).decode()
+
+
+def for_bedrock(img: Image.Image) -> bytes:
+    return jpeg(img, BEDROCK_MAX_SIDE)

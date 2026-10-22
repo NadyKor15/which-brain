@@ -6,6 +6,7 @@ Thresholds are starting values and are tuned on the tuning split only.
 
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass, field
 
@@ -77,3 +78,52 @@ def degraded(text: str) -> Decision:
     if MEDICINE_KEYWORDS.search(text):
         return Decision("refuse", "ask_human", degraded=True)
     return Decision("answer", "read_closely", degraded=True)
+
+
+# ---------------------------------------------------------------- Request 2 (the frame)
+
+FRAME_CLEAR = 0.90
+FRAME_UNREADABLE = 0.60
+ITEM_MEDICINE_TAU = 0.30
+MAX_REASKS = 2
+
+
+def frame_verdict(
+    frame: ChoiceAnswer,
+    item_medicine: NoulAnswer,
+    *,
+    reasks: int = 0,
+    clear: float = FRAME_CLEAR,
+    unreadable: float = FRAME_UNREADABLE,
+    medicine_tau: float = ITEM_MEDICINE_TAU,
+    max_reasks: int = MAX_REASKS,
+) -> str:
+    """How sure the helper may sound about a frame: "refuse", "reask", "hedge" or "plain".
+
+    Medicine in the picture refuses. "unreadable" asks for a closer look at most
+    ``max_reasks`` times, then the answer goes out hedged. "clear" below 0.90 or
+    "partly" is hedged ("I think"), and rules.compose never hedges a number.
+    """
+    if item_medicine.probability >= medicine_tau:
+        return "refuse"
+    p = frame.probabilities
+    if p.get("unreadable", 0.0) >= unreadable:
+        return "reask" if reasks < max_reasks else "hedge"
+    if frame.choice == "clear" and p.get("clear", 0.0) >= clear:
+        return "plain"
+    return "hedge"
+
+
+# rules.compose speaks by frame level; this is the mapping from the verdict
+COMPOSE_LEVEL = {"plain": "clear", "hedge": "partly", "reask": "unreadable"}
+
+
+def text_state(latest: str, previous: list[str] | None = None, near_mic: bool | None = None) -> str:
+    """Request 1 state, the JSON in brief §2. near_mic is left out when unknown (the ablation)."""
+    state: dict[str, object] = {"latest": latest, "previous": list(previous or [])[-2:]}
+    if near_mic is not None:
+        state["near_mic"] = near_mic
+    return json.dumps(state)
+
+
+FRAME_STATE = "A photo from a phone worn on the chest of a cook."
