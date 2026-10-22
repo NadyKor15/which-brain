@@ -57,6 +57,10 @@ TEXT_TIMEOUT_S = 1.5  # TARGET (brief §2); past it the keyword net decides
 VISION_TIMEOUT_S = 2.5
 
 SORRY = "Sorry, something went wrong. Please ask your helper."
+FRAME_INSTRUCTION = (
+    "The picture is what the cook is holding up to the camera. Read only text you can actually see "
+    "on it; if the text you need is not visible, say so and do not guess."
+)
 
 
 @dataclass
@@ -71,6 +75,7 @@ class Turn:
         False  # True when the phrase expects a picture (a missing frame is then a gate miss)
     )
     reasks: int = 0
+    confirmed: bool = False  # the cook said "yes" to "Did you ask me?": addressed counts as 1.0
 
 
 @dataclass
@@ -138,7 +143,8 @@ def attach_frame(jpeg: bytes) -> Callable[[Any], None]:
         for message in reversed(event.messages or []):
             if message.get("role") == "user":
                 message["content"] = list(message.get("content", [])) + [
-                    {"image": {"format": "jpeg", "source": {"bytes": jpeg}}}
+                    {"image": {"format": "jpeg", "source": {"bytes": jpeg}}},
+                    {"text": FRAME_INSTRUCTION},
                 ]
                 return
 
@@ -232,10 +238,9 @@ class SafetyFirstHandler(InterventionHandler):
             td = TurnDecision(rules_decide.degraded(turn.latest))
         else:
             a = resp.answers
+            addressed = NoulAnswer(1.0) if turn.confirmed else a["addressed_to_me"]
             td = TurnDecision(
-                rules_decide.decide(
-                    a["addressed_to_me"], a["about_medicine"], a["brain"], **self._thresholds
-                ),
+                rules_decide.decide(addressed, a["about_medicine"], a["brain"], **self._thresholds),
                 text_client_ms=resp.client_ms,
                 text_server_ms=resp.server_ms,
             )

@@ -587,3 +587,29 @@ def test_check_frame_itself_turns_a_4xx_into_degraded():
     bad = FakeServer(lambda body: (422, {"detail": "bad image"}))
     h = bp.SafetyFirstHandler(bad.client(), bp.DecisionCache())
     assert asyncio.run(h.check_frame(label_image())).verdict == "degraded"
+
+
+def test_yes_to_did_you_ask_decides_again_with_addressed_one(tmp_path):
+    server = text_server(addressed=0.5, medicine=0.6)
+    h = bp.SafetyFirstHandler(server.client(), bp.DecisionCache())
+    assert (
+        asyncio.run(h.decide_turn(turn("Is this the one for my heart?"))).decision.action == "ask"
+    )
+    again = asyncio.run(h.decide_turn(turn("Is this the one for my heart?", confirmed=True)))
+    assert again.decision.action == "refuse"
+
+
+def test_frame_goes_with_a_read_only_what_you_see_instruction(tmp_path):
+    reply, b, _ = play(
+        tmp_path, text_server(), turn(frame=label_image()), texts={"lite": "Tomato soup."}
+    )
+    sent = b.lite.inner.seen[0][-1]["content"]
+    assert any(blk.get("text") == bp.FRAME_INSTRUCTION for blk in sent)
+    reply, b, _ = play(
+        tmp_path,
+        text_server(
+            brain={"quiet_answer": 0.95, "look": 0.02, "read_closely": 0.02, "ask_human": 0.01}
+        ),
+        turn("How many ounces in a pound?"),
+    )
+    assert not any("picture" in blk.get("text", "") for blk in b.micro.inner.seen[0][-1]["content"])

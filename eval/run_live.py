@@ -598,6 +598,10 @@ def cmd_e2e(args: argparse.Namespace) -> None:
     frames_path = next(iter(sorted((MAIN / "eval" / "out").glob("frames-*.jsonl"))[-1:]), None)
     fr = frame_rows_from(frames_path)
     table = [r for r in rows() if args.split == "all" or r["split"] == args.split]
+    if args.rows == "text":
+        table = [r for r in table if not r["frame_path"]]
+    elif args.rows == "frames":
+        table = [r for r in table if r["frame_path"]]
     if args.limit:
         table = table[: args.limit]
     brains = bedrock_brains(spend)
@@ -607,6 +611,7 @@ def cmd_e2e(args: argparse.Namespace) -> None:
     )
 
     async def go() -> None:
+        followup = None
         for r in table:
             a = asr.get(r["id"])
             if a is None:
@@ -629,6 +634,19 @@ def cmd_e2e(args: argparse.Namespace) -> None:
                     near_mic=args.near_mic,
                 )
                 reply = await n8agent.run_turn(t, agent, cache, brains)
+                followup = None
+                if reply.action == "ask" and r["gold_addressed"] == "Y":
+                    # the cook answers "yes" to "Did you ask me?"; the turn is decided again
+                    t.confirmed = True
+                    cache2 = bp.DecisionCache()
+                    agent2 = n8agent.build_agent(
+                        brains,
+                        DeciderClient(URL, timeout=5),
+                        cache2,
+                        thresholds=thresholds,
+                        near_mic=args.near_mic,
+                    )
+                    followup = await n8agent.run_turn(t, agent2, cache2, brains)
             elif args.variant == "pro":
                 jpeg = frames.for_bedrock(img) if img is not None else None
                 reply = await n8agent.always(brains.pro, t, jpeg, brains)
@@ -643,6 +661,10 @@ def cmd_e2e(args: argparse.Namespace) -> None:
                 "asr_final_ms": a["final_after_eos_ms"],
                 **reply.__dict__,
             }
+            if args.variant == "router" and followup is not None:
+                row["followup"] = followup.__dict__
+                row["final_action"], row["final_said"] = followup.action, followup.said
+                row["usd"] = round(row["usd"] + followup.usd, 7)
             out.append(row)
             print(
                 r["id"],
@@ -657,7 +679,7 @@ def cmd_e2e(args: argparse.Namespace) -> None:
     try:
         asyncio.run(go())
     finally:
-        write_jsonl(OUT / f"e2e-{args.variant}-{stamp()}.jsonl", out)
+        write_jsonl(OUT / f"e2e-{args.variant}-{args.rows}-{stamp()}.jsonl", out)
         print(
             f"bedrock actual ${sum(x['usd'] for x in out):.4f}; ledger total ${spend.spent():.4f}"
         )
@@ -791,6 +813,28 @@ def invented_numbers(answer: str, label_text: str) -> list[str]:
     return [t for t in rules.unseen(answer, label_text) if t[0].isdigit()]
 
 
+def load_e2e(variant: str) -> tuple[str, list[dict[str, Any]]]:
+    """The latest full run of a variant, or the latest text part plus the latest frames part."""
+    full = sorted(OUT.glob(f"e2e-{variant}-all-*.jsonl"))
+    parts = [sorted(OUT.glob(f"e2e-{variant}-{p}-*.jsonl")) for p in ("text", "frames")]
+    if (
+        parts[0]
+        and parts[1]
+        and (
+            not full or min(parts[0][-1].name[-21:], parts[1][-1].name[-21:]) > full[-1].name[-21:]
+        )
+    ):
+        paths = [parts[0][-1], parts[1][-1]]
+    elif full:
+        paths = [full[-1]]
+    else:
+        paths = [p[-1] for p in parts if p]
+    if not paths:
+        sys.exit(f"no eval/out/e2e-{variant}-*.jsonl yet")
+    items = [x for path in paths for x in read_jsonl(path)]
+    return " + ".join(p.name for p in paths), items
+
+
 def cmd_e2e_score(args: argparse.Namespace) -> None:
     """End-to-end outcomes from e2e-*.jsonl: what was actually said, per variant."""
     labels = json.loads(LABELS.read_text())
@@ -799,12 +843,21 @@ def cmd_e2e_score(args: argparse.Namespace) -> None:
     md = [f"# End to end: what was said ({stamp()})", ""]
     out_rows = []
     for variant in args.variants:
-        path = latest(f"e2e-{variant}-*.jsonl")
-        items = [x for x in read_jsonl(path) if args.split == "all" or x["split"] == args.split]
+        name, items = load_e2e(variant)
+        items = [x for x in items if args.split == "all" or x["split"] == args.split]
         c: Counter = Counter()
         notes: list[str] = []
         for x in items:
             r = table[x["id"]]
+            if "final_action" in x:  # "Did you ask me?" then "yes": score what the second turn did
+                f = x["followup"]
+                x = {
+                    **x,
+                    "action": f["action"],
+                    "said": f["said"],
+                    "answer": f["answer"],
+                    "verdict": f["verdict"],
+                }
             said = x.get("said") or ""
             c["n"] += 1
             c["hedge_violations"] += bool(rules.hedge_violations(said))
@@ -850,7 +903,7 @@ def cmd_e2e_score(args: argparse.Namespace) -> None:
             "answers_with_invented_numbers": f"{c['invented_numbers']}/{c['frame_answers']}",
             "i_think_next_to_a_number": f"{c['hedge_violations']}/{c['n']}",
         }
-        md.append(f"## {variant} · {args.split} ({path.name})")
+        md.append(f"## {variant} · {args.split} ({name})")
         md.append("| metric | value |\n|---|---|")
         md.extend(f"| {k} | {v} |" for k, v in metrics.items())
         md.extend(["", *notes, ""])
@@ -954,8 +1007,7 @@ def cmd_bench(args: argparse.Namespace) -> None:
         "",
     ]
     for variant in args.variants:
-        path = latest(f"e2e-{variant}-*.jsonl")
-        items = read_jsonl(path)
+        name, items = load_e2e(variant)
         groups: dict[str, list[dict[str, float]]] = defaultdict(list)
         for x in items:
             said = x.get("said")
@@ -984,7 +1036,7 @@ def cmd_bench(args: argparse.Namespace) -> None:
             groups[path_of(x)].append(row)
             groups["all"].append(row)
         table = {}
-        md.append(f"## {variant} ({path.name}, n={len(items)})")
+        md.append(f"## {variant} ({name}, n={len(items)})")
         md.append(
             "| path | n | Transcribe final (from end of speech) | Decider R1 (call) | first sound (from end of speech) | Bedrock 1st token (from end of speech) | Decider R2 (call) | answer ready (from end of speech) | Polly 1st byte (call) | **first word (from end of speech)** p50 / p90 |"
         )
@@ -1074,6 +1126,12 @@ def main() -> None:
     e.add_argument("--split", default="all", choices=["all", "tune", "held_out"])
     e.add_argument("--near-mic", choices=["off", "state", "code"], default="off")
     e.add_argument("--limit", type=int)
+    e.add_argument(
+        "--rows",
+        default="all",
+        choices=["all", "text", "frames"],
+        help="phrases without a frame, with a frame, or all (parts are merged when read)",
+    )
     b = sub.add_parser("bench")
     b.add_argument("--variants", nargs="+", default=["router", "pro"])
     es = sub.add_parser("e2e-score")
