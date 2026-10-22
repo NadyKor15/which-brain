@@ -132,3 +132,10 @@ def test_wer():
     rl = runner()
     assert rl.wer("Set a timer for twelve minutes.", "set a timer for twelve minutes") == 0
     assert rl.wer("Is this the soup?", "is this soup") == 0.25
+
+
+def test_invented_numbers_are_numbers_not_on_the_label():
+    rl = runner()
+    label = "TOMATO SOUP NET WT 14.1 OZ (400 g) Heat 5 minutes"
+    assert rl.invented_numbers("Tomato soup, 400 grams.", label) == []
+    assert rl.invented_numbers("Tomato soup, 450 grams. Heat 5 minutes.", label) == ["450"]

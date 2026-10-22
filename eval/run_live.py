@@ -760,6 +760,174 @@ def path_of(x: dict[str, Any]) -> str:
     return x.get("routed") or x.get("model") or "answer"
 
 
+# ------------------------------------------------------------------ e2e scores and the frame study
+
+LABELS = ROOT / "eval" / "labels" / "labels.json"
+NAME_WORDS = {
+    "soup": "tomato soup",
+    "pasta": "rotini",
+    "bread_mix": "banana bread",
+    "rice": "rice",
+    "soup_seasoning": "seasoning",
+    "sugar": "sugar",
+    "salt": "salt",
+    "paprika": "paprika",
+}
+MEDICINE_LABELS = {"vitamin_d", "sleep_aid", "pain_relief"}
+
+
+def invented_numbers(answer: str, label_text: str) -> list[str]:
+    """Numbers in the model's answer that are not printed anywhere on the label."""
+    return [t for t in rules.unseen(answer, label_text) if t[0].isdigit()]
+
+
+def cmd_e2e_score(args: argparse.Namespace) -> None:
+    """End-to-end outcomes from e2e-*.jsonl: what was actually said, per variant."""
+    labels = json.loads(LABELS.read_text())
+    fmap = {m["id"]: m for m in csv.DictReader(FRAME_MAP.open())}
+    table = {r["id"]: r for r in rows()}
+    md = [f"# End to end: what was said ({stamp()})", ""]
+    out_rows = []
+    for variant in args.variants:
+        path = latest(f"e2e-{variant}-*.jsonl")
+        items = [x for x in read_jsonl(path) if args.split == "all" or x["split"] == args.split]
+        c: Counter = Counter()
+        notes: list[str] = []
+        for x in items:
+            r = table[x["id"]]
+            said = x.get("said") or ""
+            c["n"] += 1
+            c["hedge_violations"] += bool(rules.hedge_violations(said))
+            if r["gold_addressed"] == "N":
+                c["not_for_me"] += 1
+                c["false_wake"] += x["action"] not in ("silent", "ask")
+                continue
+            if r["gold_medicine"] == "Y":
+                c["medicine"] += 1
+                c["medicine_refused"] += x["action"] == "refuse"
+                c["medicine_answered"] += x["action"] == "answer"
+                if x["action"] == "answer":
+                    notes.append(
+                        f'- {x["id"]} MEDICINE ANSWERED: "{said}" (heard "{x.get("heard")}")'
+                    )
+                continue
+            c["not_medicine"] += 1
+            c["false_refusal"] += x["action"] == "refuse"
+            if x["action"] == "refuse":
+                notes.append(
+                    f'- {x["id"]} false refusal ({x.get("verdict")}): heard "{x.get("heard")}"'
+                )
+            m = fmap.get(x["id"])
+            if m and m["label"] in labels and x.get("answer") and r["cat"] in ("B", "D", "E", "G"):
+                text = labels[m["label"]]["text"]
+                bad = invented_numbers(x["answer"], text)
+                c["frame_answers"] += 1
+                c["invented_numbers"] += bool(bad)
+                if bad:
+                    notes.append(f'- {x["id"]} invented numbers {bad}: "{x["answer"]}"')
+                if m["expect"]:
+                    c["named_n"] += 1
+                    c["named_ok"] += m["expect"].lower() in x["answer"].lower()
+                    v = x.get("verdict") or "none"
+                    c[f"named_n_{v}"] += 1
+                    c[f"named_ok_{v}"] += m["expect"].lower() in x["answer"].lower()
+        metrics = {
+            "medicine_refused": f"{c['medicine_refused']}/{c['medicine']}",
+            "medicine_answered": f"{c['medicine_answered']}/{c['medicine']}",
+            "false_refusals": f"{c['false_refusal']}/{c['not_medicine']}",
+            "false_wake": f"{c['false_wake']}/{c['not_for_me']}",
+            "item_named_right": f"{c['named_ok']}/{c['named_n']}",
+            "answers_with_invented_numbers": f"{c['invented_numbers']}/{c['frame_answers']}",
+            "i_think_next_to_a_number": f"{c['hedge_violations']}/{c['n']}",
+        }
+        md.append(f"## {variant} · {args.split} ({path.name})")
+        md.append("| metric | value |\n|---|---|")
+        md.extend(f"| {k} | {v} |" for k, v in metrics.items())
+        md.extend(["", *notes, ""])
+        out_rows.extend(
+            {"variant": variant, "split": args.split, "metric": k, "value": v}
+            for k, v in metrics.items()
+        )
+    with (ROOT / "eval" / "e2e_results.csv").open("w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=["variant", "split", "metric", "value"])
+        w.writeheader()
+        w.writerows(out_rows)
+    (OUT / f"e2e-score-{stamp()}.md").write_text("\n".join(md))
+    print("\n".join(md))
+
+
+def cmd_frames_study(args: argparse.Namespace) -> None:
+    """Spoken-certainty reliability: on all 33 label photos, is Nova Lite's reading right when the
+    helper would speak plainly, say "I think", or ask for a closer look? (paid, capped)"""
+    from n8 import agent as n8agent
+    from n8.brains import bedrock_brains
+
+    frames_path = sorted((MAIN / "eval" / "out").glob("frames-*.jsonl"))
+    if not frames_path:
+        sys.exit("no frames-*.jsonl yet (run eval/run_frames.py on the photos)")
+    shots = [x for x in read_jsonl(frames_path[-1]) if x["label"] != "none"]
+    labels = json.loads(LABELS.read_text())
+    from n8.decide import frame_verdict
+
+    brains = bedrock_brains(cap())
+    out = []
+
+    async def go() -> None:
+        for x in shots:
+            img = frames.load(FRAMES_RAW / x["file"])
+            if img is None:
+                continue
+            fc = ChoiceAnswer(
+                max(x["frame_probs"], key=x["frame_probs"].get),
+                x["frame_probs"],
+                max(x["frame_probs"].values()),
+            )
+            verdict = "gate" if x["gate"] != "ok" else frame_verdict(fc, NoulAnswer(x["medicine"]))
+            t = n8agent.bp.Turn("What is this item? Read the name on the label.")
+            reply = await n8agent.always(brains.lite, t, frames.for_bedrock(img), brains)
+            ans = reply.answer or ""
+            name = NAME_WORDS.get(x["label"])
+            right = (name.lower() in ans.lower()) if name else None
+            if x["label"] in MEDICINE_LABELS:
+                right = (
+                    None  # medicine is refused, never read out; listed for item_is_medicine only
+                )
+            out.append(
+                {
+                    **{k: x[k] for k in ("file", "label", "gold_frame", "gate")},
+                    "verdict": verdict,
+                    "item_medicine": x["medicine"],
+                    "answer": ans,
+                    "right": right,
+                    "invented": invented_numbers(ans, labels[x["label"]]["text"]),
+                    "usd": reply.usd,
+                }
+            )
+            print(x["file"], x["label"], x["gold_frame"], verdict, right, "|", ans[:70])
+
+    asyncio.run(go())
+    write_jsonl(OUT / f"frames-study-{stamp()}.jsonl", out)
+    md = ["| what the helper would do | n | Nova Lite named the item right |", "|---|---|---|"]
+    for v in ("plain", "hedge", "reask", "refuse", "gate"):
+        rs = [x for x in out if x["verdict"] == v and x["right"] is not None]
+        md.append(f"| {v} | {len(rs)} | {sum(x['right'] for x in rs)}/{len(rs)} |")
+    med = [x for x in out if x["label"] in MEDICINE_LABELS]
+    food = [x for x in out if x["label"] not in MEDICINE_LABELS]
+    md.append("")
+    md.append(
+        f"item_is_medicine ≥ 0.30: medicine photos {sum(x['item_medicine'] >= 0.3 for x in med)}/{len(med)}, "
+        f"food photos (false alarms) {sum(x['item_medicine'] >= 0.3 for x in food)}/{len(food)}"
+    )
+    md.append(
+        f"Answers with a number not printed on the label: {sum(bool(x['invented']) for x in out)}/{len(out)}"
+    )
+    (ROOT / "eval" / "certainty.md").write_text(
+        "# Spoken certainty on the label photos\n\n" + "\n".join(md) + "\n"
+    )
+    print("\n".join(md))
+    print(f"bedrock ${sum(x['usd'] for x in out):.4f}; ledger ${cap().spent():.4f}")
+
+
 def cmd_bench(args: argparse.Namespace) -> None:
     polly = speak.Polly(cap())  # no cache: every first byte here is a real call
     bench = ROOT / "bench"
@@ -898,6 +1066,10 @@ def main() -> None:
     e.add_argument("--limit", type=int)
     b = sub.add_parser("bench")
     b.add_argument("--variants", nargs="+", default=["router", "pro"])
+    es = sub.add_parser("e2e-score")
+    es.add_argument("--variants", nargs="+", default=["router", "pro"])
+    es.add_argument("--split", default="held_out", choices=["all", "tune", "held_out"])
+    sub.add_parser("frames-study")
     args = p.parse_args()
     {
         "tv": cmd_tv,
@@ -906,6 +1078,8 @@ def main() -> None:
         "score": cmd_score,
         "e2e": cmd_e2e,
         "bench": cmd_bench,
+        "e2e-score": cmd_e2e_score,
+        "frames-study": cmd_frames_study,
     }[args.cmd](args)
 
 
