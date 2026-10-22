@@ -48,7 +48,7 @@ def main_checkout() -> Path:
 
 MAIN = main_checkout()
 AUDIO = MAIN / "eval" / "audio"
-FRAMES_RAW = MAIN / "eval" / "frames" / "raw"
+FRAME_DIRS = [MAIN / "eval" / "frames" / "incoming", MAIN / "eval" / "frames" / "raw"]
 LEDGER = MAIN / "eval" / "out" / "spend.jsonl"
 OUT = ROOT / "eval" / "out"
 ASR_CACHE = OUT / "asr"
@@ -417,17 +417,40 @@ def sweep(
     return min(candidates, key=lambda c: c[0])[1]
 
 
+def frame_file(name: str) -> Path | None:
+    for folder in FRAME_DIRS:
+        if (folder / name).exists():
+            return folder / name
+    return None
+
+
+def photo_sides() -> dict[str, str]:
+    """file -> "front" / "back" from the photo manifests (eval/frames/manifest-*.csv)."""
+    sides: dict[str, str] = {}
+    for m in sorted((MAIN / "eval" / "frames").glob("manifest-*.csv")):
+        for r in csv.DictReader(m.open()):
+            sides[r["file"]] = r.get("side") or "front"
+    return sides
+
+
 def frame_rows_from(path: Path | None) -> dict[str, dict[str, Any]]:
-    """Phrase id -> the photo it uses (eval/frame_map.csv) plus that photo's gate and Request 2."""
-    shots = {}
+    """Phrase id -> the photo it uses (eval/frame_map.csv) plus that photo's gate and Request 2.
+
+    A close-read question (gold brain read_closely) uses the back of the pack, where the small print
+    is; everything else uses the front. The first photo of that label, level and side is taken.
+    """
+    sides = photo_sides()
+    shots: dict[tuple[str, str, str], dict[str, Any]] = {}
     if path is not None:
         for x in read_jsonl(path):
-            shots[(x["label"], x["gold_frame"])] = x
+            key = (x["label"], x["gold_frame"], sides.get(x["file"], "front"))
+            shots.setdefault(key, x)
+    gold = {r["id"]: r["gold_brain"] for r in rows()}
     out = {}
     for m in csv.DictReader(FRAME_MAP.open()):
         level = m["level"]
-        key = (m["label"], level) if m["label"] != "none" else ("none", level)
-        shot = shots.get(key, {})
+        side = "back" if gold.get(m["id"]) == "read_closely" else "front"
+        shot = shots.get((m["label"], level, side)) or shots.get((m["label"], level, "front"), {})
         out[m["id"]] = {**m, "gate": shot.get("gate"), "file": shot.get("file"), "shot": shot}
     return out
 
@@ -584,7 +607,8 @@ def cmd_score(args: argparse.Namespace) -> None:
 def load_frame(fr: dict[str, Any] | None):
     if fr is None or fr.get("level") == "missing" or not fr.get("file"):
         return None
-    return frames.load(FRAMES_RAW / fr["file"])
+    path = frame_file(fr["file"])
+    return frames.load(path) if path is not None else None
 
 
 def cmd_e2e(args: argparse.Namespace) -> None:
@@ -957,7 +981,8 @@ def cmd_frames_study(args: argparse.Namespace) -> None:
 
     async def go() -> None:
         for x in shots:
-            img = frames.load(FRAMES_RAW / x["file"])
+            path = frame_file(x["file"])
+            img = frames.load(path) if path is not None else None
             if img is None:
                 continue
             fc = ChoiceAnswer(
