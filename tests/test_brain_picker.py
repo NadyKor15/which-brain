@@ -581,3 +581,9 @@ def test_frame_task_is_cancelled_when_every_brain_fails(tmp_path, monkeypatch):
     reply = asyncio.run(go())
     assert reply.said == bp.SORRY and time.perf_counter() - started < 5
     assert seen and seen[0].frame_task.cancelled()
+
+
+def test_check_frame_itself_turns_a_4xx_into_degraded():
+    bad = FakeServer(lambda body: (422, {"detail": "bad image"}))
+    h = bp.SafetyFirstHandler(bad.client(), bp.DecisionCache())
+    assert asyncio.run(h.check_frame(label_image())).verdict == "degraded"
