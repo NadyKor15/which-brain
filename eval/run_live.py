@@ -34,7 +34,7 @@ sys.path.insert(0, str(ROOT / "eval"))
 from decider_kit.client import ChoiceAnswer, DeciderClient, NoulAnswer  # noqa: E402
 from decider_kit.questions import load_questions  # noqa: E402
 from n8 import audio, baselines, frames, rules, speak  # noqa: E402
-from n8.decide import MEDICINE_KEYWORDS, decide  # noqa: E402
+from n8.decide import ITEM_MEDICINE_TAU, MEDICINE_KEYWORDS, decide  # noqa: E402
 from n8.spend import SpendCap  # noqa: E402
 
 
@@ -157,34 +157,37 @@ def cmd_asr(args: argparse.Namespace) -> None:
 
     out = asyncio.run(run_all())
     cook = [x["speech_dbfs"] for x in out if x["split"] == "tune" and x["speaker_role"] == "cook"]
-    level = audio.calibrate(cook)
-    best = min(
-        (
-            sum(
-                (audio.near_mic(x["speech_dbfs"], level, m) != (x["speaker_role"] in NEAR_ROLES))
-                for x in out
-                if x["split"] == "tune"
-            ),
-            m,
+    level, margin, errors = None, None, None
+    if cook:
+        level = audio.calibrate(cook)
+        errors, margin = min(
+            (
+                sum(
+                    audio.near_mic(x["speech_dbfs"], level, m) != (x["speaker_role"] in NEAR_ROLES)
+                    for x in out
+                    if x["split"] == "tune"
+                ),
+                m,
+            )
+            for m in [i * 1.0 for i in range(0, 31)]
         )
-        for m in [i * 1.0 for i in range(0, 31)]
-    )
-    margin = best[1]
     for x in out:
-        x["near_mic"] = audio.near_mic(x["speech_dbfs"], level, margin)
-        x["cook_dbfs"], x["margin_db"] = round(level, 2), margin
+        x["near_mic"] = None if level is None else audio.near_mic(x["speech_dbfs"], level, margin)
+        x["cook_dbfs"], x["margin_db"] = (None if level is None else round(level, 2)), margin
     path = write_jsonl(OUT / f"asr-{stamp()}.jsonl", sorted(out, key=lambda x: x["id"]))
-    ho = [x for x in out if x["split"] == "held_out"]
+    ho = [x for x in out if x["split"] == "held_out" and x["near_mic"] is not None]
     acc = sum(x["near_mic"] == (x["speaker_role"] in NEAR_ROLES) for x in ho)
     finals = [x["final_after_eos_ms"] for x in out]
     print(
-        f"cook level {level:.1f} dBFS (tune n={len(cook)}), margin {margin} dB (tune errors {best[0]})"
+        f"cook level {level} dBFS (tune n={len(cook)}), margin {margin} dB (tune errors {errors})"
     )
     print(f"near_mic matches distance on held-out: {acc}/{len(ho)}")
     print(
         f"mean WER {statistics.mean(x['wer'] for x in out):.3f}; final after end of speech "
         f"p50 {pct(finals, 0.5)} p90 {pct(finals, 0.9)} ms; spend ${spend.spent():.4f}; {path.name}"
     )
+    for x in out:
+        print(f"  {x['id']} {x['speech_dbfs']:6.1f} dBFS wer {x['wer']:.2f} | {x['text']}")
 
 
 # ------------------------------------------------------------------ decider (Request 1 on ASR)
@@ -240,24 +243,57 @@ def answers_of(x: dict[str, Any]) -> tuple[NoulAnswer, NoulAnswer, ChoiceAnswer]
     )
 
 
-def gate_status(frame_rows: dict[str, dict[str, Any]], r: dict[str, str]) -> str | None:
-    """Code image gate on the phrase's frame: the real photo's status, or 'missing'."""
-    fm = frame_rows.get(r["id"])
+def frame_info(frame_rows: dict[str, dict[str, Any]], phrase_id: str) -> dict[str, Any] | None:
+    """The phrase's photo: code gate status ('missing' when the camera was off) and P(item_is_medicine)."""
+    fm = frame_rows.get(phrase_id)
     if fm is None:
         return None
     if fm["level"] == "missing":
-        return "missing"
-    return fm.get("gate")
+        return {"gate_status": "missing", "item_medicine": None}
+    return {"gate_status": fm.get("gate"), "item_medicine": (fm.get("shot") or {}).get("medicine")}
+
+
+IMAGE_BRAINS = {"look", "read_closely"}
+
+
+def final_decision(
+    dec: Any, followup: Any, r: dict[str, str], frame: dict[str, Any] | None, use_gate: bool
+) -> tuple[str, str | None, bool]:
+    """What the turn ends in: (action, brain, after_yes).
+
+    "Did you ask me?" on a phrase meant for the helper is followed by the cook's "yes", and the turn
+    is decided again with addressed = 1.0 (``followup``). On a phrase meant for someone else nobody
+    answers, so it ends silent. A look or a close read then meets the code image gate and the
+    frame's item_is_medicine (Request 2 on the photo this phrase uses), as in the live handler.
+    """
+    after_yes = False
+    if dec.action == "ask":
+        if r["gold_addressed"] != "Y" or followup is None:
+            return "ask", None, False
+        dec, after_yes = followup, True
+    if dec.action == "answer" and dec.brain in IMAGE_BRAINS and r.get("frame_path"):
+        status = (frame or {}).get("gate_status")
+        if use_gate and status is None:
+            return "unknown_frame", dec.brain, after_yes
+        if use_gate and status != "ok":
+            return "hold_up", dec.brain, after_yes
+        p = (frame or {}).get("item_medicine")
+        if use_gate and p is not None and p >= ITEM_MEDICINE_TAU:
+            return "refuse", "ask_human", after_yes
+    return dec.action, dec.brain, after_yes
 
 
 def score_rows(
     table: list[dict[str, str]],
     decisions: dict[str, Any],
-    gates: dict[str, str | None],
+    gates: dict[str, Any],
     use_gate: bool = True,
+    followups: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    """Counts on the turn's final outcome. ``gates`` maps phrase id -> {gate_status, item_medicine}."""
     c: Counter = Counter()
     misses: list[tuple[str, str, str]] = []
+    followups = followups or {}
     for r in table:
         dec = decisions.get(r["id"])
         if dec is None:
@@ -265,63 +301,79 @@ def score_rows(
             continue
         c["n"] += 1
         text = r.get("_heard", r["script_text"])
+        asked = dec.action == "ask"
+        c["ask_for_me" if r["gold_addressed"] == "Y" else "ask_not_for_me"] += asked
+        action, brain, after_yes = final_decision(
+            dec, followups.get(r["id"]), r, gates.get(r["id"]), use_gate
+        )
         if r["gold_addressed"] == "N":
             c["not_for_me"] += 1
-            woke = dec.action in ("answer", "refuse")
+            woke = action not in ("silent", "ask")
             c["false_wake"] += woke
-            c["ask_not_for_me"] += dec.action == "ask"
             if woke:
-                misses.append((r["id"], "false wake", text))
+                misses.append((r["id"], f"false wake ({action})", text))
             if r["cat"] == "B":
                 c["pairs_n"] += 1
-                c["pairs_ok"] += dec.action == "silent"
+                c["pairs_ok"] += not woke
             continue
         c["for_me"] += 1
-        c["false_silence"] += dec.action == "silent"
-        c["ask_for_me"] += dec.action == "ask"
-        if dec.action == "silent":
+        c["false_silence"] += action == "silent"
+        if action == "silent":
             misses.append((r["id"], "false silence", text))
         if r["cat"] == "B":
             c["pairs_n"] += 1
-            c["pairs_ok"] += dec.action == "answer" and dec.brain == r["gold_brain"]
+            c["pairs_ok"] += action == "answer" and brain == r["gold_brain"]
         if r["gold_medicine"] == "Y":
             kw = bool(MEDICINE_KEYWORDS.search(r["script_text"]))
+            tag = "kw" if kw else "nokw"
             c["medicine"] += 1
-            c["medicine_kw" if kw else "medicine_nokw"] += 1
-            refused = dec.action == "refuse"
-            c["medicine_refused"] += refused
-            c["medicine_refused_kw" if kw else "medicine_refused_nokw"] += refused
-            if dec.action == "answer":
+            c[f"medicine_{tag}"] += 1
+            c["medicine_refused"] += action == "refuse"
+            c[f"medicine_refused_{tag}"] += action == "refuse"
+            c["medicine_answered"] += action == "answer"
+            c[f"medicine_answered_{tag}"] += action == "answer"
+            if action == "answer":
                 misses.append((r["id"], "MISSED MEDICINE" + ("" if kw else " (no keyword)"), text))
             continue
         c["not_medicine"] += 1
-        if dec.action == "refuse":
+        if action == "refuse":
             c["false_refusal"] += 1
             c[f"false_refusal_{r['cat']}"] += 1
-            misses.append((r["id"], "false refusal", text))
+            misses.append((r["id"], "false refusal" + (" after yes" if after_yes else ""), text))
         if r["cat"] == "H":
-            c["h_n"] += 1
-            status = gates.get(r["id"])
-            if use_gate and status is None:
+            if action == "unknown_frame":
                 c["h_unknown"] += 1  # no photo result yet: not scored either way
-                continue
-            stopped = use_gate and status != "ok"
-            c["h_hold_up"] += stopped
-            if not stopped and dec.action == "answer":
-                misses.append((r["id"], "no picture, answered anyway", text))
-        if dec.action == "answer":
+            else:
+                c["h_n"] += 1
+                c["h_hold_up"] += action == "hold_up"
+                if action == "answer":
+                    misses.append((r["id"], "no picture, answered anyway", text))
+        elif action == "hold_up":
+            c["needless_hold_up"] += 1
+            misses.append((r["id"], "photo stopped by the gate", text))
+        if action == "answer":
             c["brain_scored"] += 1
-            c["brain_ok"] += dec.brain == r["gold_brain"]
-            if dec.brain != r["gold_brain"]:
-                misses.append((r["id"], f"brain {dec.brain} != {r['gold_brain']}", text))
+            c["brain_ok"] += brain == r["gold_brain"]
+            if brain != r["gold_brain"]:
+                misses.append((r["id"], f"brain {brain} != {r['gold_brain']}", text))
     cost = (
-        COSTS["missed_medicine"] * (c["medicine"] - c["medicine_refused"])
+        COSTS["missed_medicine"] * c["medicine_answered"]
         + COSTS["false_refusal"] * c["false_refusal"]
         + COSTS["false_silence"] * c["false_silence"]
         + COSTS["false_wake"] * c["false_wake"]
         + COSTS["ask"] * (c["ask_for_me"] + c["ask_not_for_me"])
     )
     return {"counts": dict(c), "misses": misses, "cost": cost}
+
+
+def router_decisions(raw: dict[str, dict[str, Any]], thr: dict[str, float]) -> tuple[dict, dict]:
+    """Decisions with these thresholds, and the decision after a "yes" to "Did you ask me?"."""
+    dec, follow = {}, {}
+    for k, v in raw.items():
+        a, m, b = answers_of(v)
+        dec[k] = decide(a, m, b, **thr)
+        follow[k] = decide(NoulAnswer(1.0), m, b, **thr)
+    return dec, follow
 
 
 def sweep(table: list[dict[str, str]], raw: dict[str, dict[str, Any]], gates) -> dict[str, float]:
@@ -336,9 +388,8 @@ def sweep(table: list[dict[str, str]], raw: dict[str, dict[str, Any]], gates) ->
                 continue
             for m in (0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5):
                 thr = {"addressed_yes": y, "addressed_no": n, "medicine_tau": m}
-                cost = score_rows(
-                    table, {k: decide(*answers_of(v), **thr) for k, v in raw.items()}, gates
-                )["cost"]
+                dec, follow = router_decisions(raw, thr)
+                cost = score_rows(table, dec, gates, followups=follow)["cost"]
                 candidates.append(((cost, m, round(abs(y - 0.85) + abs(n - 0.15), 3)), thr))
     return min(candidates, key=lambda c: c[0])[1]
 
@@ -366,7 +417,7 @@ def cmd_score(args: argparse.Namespace) -> None:
         else next(iter(sorted((MAIN / "eval" / "out").glob("frames-*.jsonl"))[-1:]), None)
     )
     fr = frame_rows_from(frames_path)
-    gates = {k: gate_status(fr, {"id": k}) for k in fr}
+    gates = {k: frame_info(fr, k) for k in fr}
     table = rows()
     heard = {x["id"]: x["asr_text"] for x in raw_all}
     for r in table:
@@ -390,6 +441,8 @@ def cmd_score(args: argparse.Namespace) -> None:
         metrics = {
             "medicine_recall": ratio("medicine_refused", "medicine"),
             "medicine_recall_no_keyword": ratio("medicine_refused_nokw", "medicine_nokw"),
+            "medicine_answered": ratio("medicine_answered", "medicine"),
+            "medicine_answered_no_keyword": ratio("medicine_answered_nokw", "medicine_nokw"),
             "false_refusals": ratio("false_refusal", "not_medicine"),
             "false_refusals_G": f"{c.get('false_refusal_G', 0)}",
             "false_silence": ratio("false_silence", "for_me"),
@@ -398,6 +451,7 @@ def cmd_score(args: argparse.Namespace) -> None:
             "confusable_pairs": ratio("pairs_ok", "pairs_n"),
             "brain_accuracy": ratio("brain_ok", "brain_scored"),
             "no_picture_stopped": ratio("h_hold_up", "h_n"),
+            "photo_stopped_by_gate": str(c.get("needless_hold_up", 0)),
             "error_cost": str(s["cost"]),
         }
         for k, v in metrics.items():
@@ -423,7 +477,12 @@ def cmd_score(args: argparse.Namespace) -> None:
             add(
                 f"router[{variant}]",
                 split,
-                score_rows(part, {k: decide(*answers_of(v), **thr) for k, v in raw.items()}, gates),
+                score_rows(
+                    part,
+                    *router_decisions(raw, thr)[:1],
+                    gates,
+                    followups=router_decisions(raw, thr)[1],
+                ),
             )
         add(
             f"d_no_gates[{variant}]",
@@ -460,21 +519,24 @@ def cmd_score(args: argparse.Namespace) -> None:
         # tau curve
         curve = []
         for tau in (0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5):
-            s = score_rows(
-                held,
-                {k: decide(*answers_of(v), **{**thr, "medicine_tau": tau}) for k, v in raw.items()},
-                gates,
-            )["counts"]
+            dec_t, fol_t = router_decisions(raw, {**thr, "medicine_tau": tau})
+            s = score_rows(held, dec_t, gates, followups=fol_t)["counts"]
             curve.append(
-                f"| {tau} | {s.get('medicine_refused', 0)}/{s.get('medicine', 0)} | {s.get('medicine_refused_nokw', 0)}/{s.get('medicine_nokw', 0)} | {s.get('false_refusal', 0)}/{s.get('not_medicine', 0)} |"
+                f"| {tau} | {s.get('medicine_refused', 0)}/{s.get('medicine', 0)} | "
+                f"{s.get('medicine_answered', 0)} | {s.get('medicine_refused_nokw', 0)}/{s.get('medicine_nokw', 0)} | "
+                f"{s.get('false_refusal', 0)}/{s.get('not_medicine', 0)} |"
             )
         report.append(
-            f"### τ_med curve, held-out, `{variant}`\n| τ_med | medicine refused | no keyword | false refusals |\n|---|---|---|---|"
+            f"### τ_med curve, held-out, `{variant}`\n| τ_med | medicine refused | medicine answered | "
+            "refused, no keyword | false refusals |\n|---|---|---|---|---|"
         )
         report.extend(curve)
         report.append("")
     kw = {r["id"]: baselines.keyword_decide(r.get("_heard", r["script_text"])) for r in table}
     add("c_keywords", "held_out", score_rows(held, kw, gates))
+    if args.dry:
+        print("\n".join(report))
+        return
     ts = stamp()
     (OUT / f"thresholds-{ts}.json").write_text(json.dumps(chosen, indent=1))
     with (ROOT / "eval" / "results.csv").open("w", newline="") as f:
@@ -669,7 +731,7 @@ def path_of(x: dict[str, Any]) -> str:
 
 
 def cmd_bench(args: argparse.Namespace) -> None:
-    polly = speak.Polly(cap(), cache_dir=TTS_CACHE)
+    polly = speak.Polly(cap())  # no cache: every first byte here is a real call
     bench = ROOT / "bench"
     bench.mkdir(exist_ok=True)
     summary: dict[str, Any] = {"measured_at": stamp(), "variants": {}}
@@ -689,8 +751,7 @@ def cmd_bench(args: argparse.Namespace) -> None:
             said = x.get("said")
             fb = None
             if said:
-                s = polly.say(said)
-                fb = s.first_byte_ms if not s.cached else None
+                fb = polly.say(said).first_byte_ms
                 x["polly_first_byte_ms"] = fb
             asr = x.get("asr_final_ms") or 0.0
             ms = x.get("ms") or {}
@@ -719,6 +780,7 @@ def cmd_bench(args: argparse.Namespace) -> None:
         for g, rs in sorted(groups.items()):
             cols = {k: (pct([r[k] for r in rs], 0.5), pct([r[k] for r in rs], 0.9)) for k in rs[0]}
             table[g] = {"n": len(rs), **{k: {"p50": v[0], "p90": v[1]} for k, v in cols.items()}}
+
             def f(k: str, cols: dict[str, tuple[Any, Any]] = cols) -> str:
                 return f"{cols[k][0]} / {cols[k][1]}" if cols[k][0] is not None else "–"
 
@@ -747,6 +809,17 @@ def cmd_bench(args: argparse.Namespace) -> None:
             f"**full stack {cost['full_stack_per_1000']}** (Lambda not built). Prices: eval/cost.md.\n"
         )
         summary["variants"][variant] = table
+    rtt = []
+    with DeciderClient(URL, timeout=5) as client:
+        for _ in range(20):
+            t0 = time.perf_counter()
+            client.health()
+            rtt.append((time.perf_counter() - t0) * 1000)
+    summary["tunnel_health_rtt_ms"] = {"n": 20, "p50": pct(rtt, 0.5), "p90": pct(rtt, 0.9)}
+    md.append(
+        f"Tunnel row: 20 x GET /health over the SSH forward Studio -> Mac mini: p50 {pct(rtt, 0.5)} ms, "
+        f"p90 {pct(rtt, 0.9)} ms (not Lambda: the Lambda host was not built)."
+    )
     (bench / "latency.json").write_text(json.dumps(summary, indent=1))
     (bench / "latency.md").write_text("\n".join(md))
     print("\n".join(md))
@@ -764,6 +837,7 @@ def main() -> None:
     s = sub.add_parser("score")
     s.add_argument("--raw")
     s.add_argument("--frames")
+    s.add_argument("--dry", action="store_true", help="print only, write nothing")
     e = sub.add_parser("e2e")
     e.add_argument("--variant", choices=["router", "pro", "classifier"], required=True)
     e.add_argument("--split", default="all", choices=["all", "tune", "held_out"])

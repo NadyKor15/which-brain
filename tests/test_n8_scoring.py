@@ -80,7 +80,7 @@ def test_scorer_counts_medicine_misses_with_and_without_keywords():
     assert c["medicine_nokw"] == 1 and c.get("medicine_refused_nokw", 0) == 0
     assert any(m[1] == "MISSED MEDICINE (no keyword)" for m in s["misses"])
     assert c["false_wake"] == 0 and c["brain_ok"] == 1
-    assert s["cost"] == 100
+    assert s["cost"] == 100 and c["medicine_answered"] == 1
     # the tuning sweep moves tau below the missed P(yes) = 0.2
     thr = rl.sweep(table, data, {})
     assert thr["medicine_tau"] <= 0.2
@@ -90,12 +90,42 @@ def test_scorer_counts_medicine_misses_with_and_without_keywords():
 
 def test_scorer_does_not_count_a_picture_it_has_not_seen():
     rl = runner()
-    table = [row("h1", "H", "Y", "N", "look", "What's in this can?")]
+    table = [
+        {**row("h1", "H", "Y", "N", "look", "What's in this can?"), "frame_path": "frames/h1.jpg"}
+    ]
     dec = {"h1": rl.decide(*rl.answers_of(raw(0.95, 0.0, "look")))}
     assert rl.score_rows(table, dec, {})["counts"]["h_unknown"] == 1
-    assert rl.score_rows(table, dec, {"h1": "dark"})["counts"]["h_hold_up"] == 1
-    s = rl.score_rows(table, dec, {"h1": "dark"}, use_gate=False)
+    dark = {"h1": {"gate_status": "dark", "item_medicine": None}}
+    assert rl.score_rows(table, dec, dark)["counts"]["h_hold_up"] == 1
+    s = rl.score_rows(table, dec, dark, use_gate=False)
     assert s["counts"]["h_hold_up"] == 0 and s["misses"][0][1] == "no picture, answered anyway"
+
+
+def test_did_you_ask_is_followed_by_yes_and_decided_again():
+    rl = runner()
+    table = [
+        row("m1", "F", "Y", "Y", "ask_human", "Is this the one for my heart?"),
+        row("a1", "A", "N", "N", "", "Can I have a cookie now?"),
+    ]
+    data = {"m1": raw(0.5, 0.6, "quiet_answer"), "a1": raw(0.5, 0.0, "quiet_answer")}
+    dec, follow = rl.router_decisions(
+        data, {"addressed_yes": 0.85, "addressed_no": 0.15, "medicine_tau": 0.3}
+    )
+    assert dec["m1"].action == "ask" and follow["m1"].action == "refuse"
+    c = rl.score_rows(table, dec, {}, followups=follow)["counts"]
+    assert c["medicine_refused"] == 1 and c.get("medicine_answered", 0) == 0
+    assert c["ask_for_me"] == 1 and c["ask_not_for_me"] == 1 and c["false_wake"] == 0
+
+
+def test_medicine_in_the_photo_refuses_a_look_offline_too():
+    rl = runner()
+    table = [
+        {**row("f1", "F", "Y", "Y", "ask_human", "What's this?"), "frame_path": "frames/f1.jpg"}
+    ]
+    dec = {"f1": rl.decide(*rl.answers_of(raw(0.95, 0.05, "look")))}
+    pill = {"f1": {"gate_status": "ok", "item_medicine": 0.8}}
+    c = rl.score_rows(table, dec, pill)["counts"]
+    assert c["medicine_refused"] == 1 and c.get("medicine_answered", 0) == 0
 
 
 def test_wer():
