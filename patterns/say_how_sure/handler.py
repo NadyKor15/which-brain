@@ -6,7 +6,8 @@ Three steps, cheapest first:
    camera." and no model is called. Decider without an image still answers confidently, so this
    check cannot be left to the model.
 2. ``look(client, frame)``: Decider Request 2 asks ``frame_check`` (clear / partly / unreadable)
-   and ``item_is_medicine`` (noul, P(yes) >= 0.30 refuses).
+   and ``item_is_medicine`` (noul; logged, refuses at P(yes) >= 0.30 only when
+   ``n8.decide.ITEM_MEDICINE_ACTS`` is on: off since its 22.10 false alarms on food photos).
 3. ``hedge(verdict, answer)``: plain -> the answer as is; hedge -> "I think ..." for words, and for
    numbers "Hold it a bit closer." (never "I think" next to a number; with OCR text, the visible
    start plus "turn it"); reask -> "Hold it a bit closer." at most twice (``ReaskLoop``), then
