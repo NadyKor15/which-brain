@@ -450,7 +450,11 @@ def frame_rows_from(path: Path | None) -> dict[str, dict[str, Any]]:
     for m in csv.DictReader(FRAME_MAP.open()):
         level = m["level"]
         side = "back" if gold.get(m["id"]) == "read_closely" else "front"
-        shot = shots.get((m["label"], level, side)) or shots.get((m["label"], level, "front"), {})
+        shot = (
+            shots.get((m["label"], level, side))
+            or shots.get((m["label"], level, "front"))
+            or next((v for k, v in shots.items() if k[:2] == (m["label"], level)), {})
+        )
         out[m["id"]] = {**m, "gate": shot.get("gate"), "file": shot.get("file"), "shot": shot}
     return out
 

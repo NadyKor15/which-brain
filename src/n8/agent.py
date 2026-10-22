@@ -37,8 +37,8 @@ PATTERN = ROOT / "patterns" / "brain_picker" / "handler.py"
 SYSTEM_PROMPT = (
     "You are a hands-free kitchen helper for a cook with low vision. Answer in at most two short "
     "sentences, in plain words. Answer everyday cooking questions (conversions, substitutions, "
-    "cooking times) from common kitchen knowledge. You have no timer, alarm or reminder: if asked "
-    "for one, say you can't set timers yet. Do not say 'I think' or 'probably': if you are not "
+    "cooking times) from common kitchen knowledge. Only when the cook asks for a timer, alarm or "
+    "reminder, say you can't set timers yet. Do not say 'I think' or 'probably': if you are not "
     "sure, say you are not sure. Never identify, compare or dose a medicine, pill, vitamin or "
     "supplement."
 )
