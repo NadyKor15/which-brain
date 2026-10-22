@@ -65,7 +65,7 @@ python eval/run_live.py score --dry
 python eval/run_live.py e2e-score --variants router pro classifier
 ```
 
-The scripts find their inputs through `git`, so run them from a clone, not from a zip download. The full pipeline (`eval/run_live.py tv | asr | decider | e2e | bench`) needs a running Strands Decider 2B server, AWS credentials with Bedrock, Transcribe and Polly in us-east-1, and the recorded audio, which is not in the repo (it is the author's voice). Paid calls go through `src/n8/spend.py`, which prices every call before it is made and stops at $5; the whole build spent $1.56.
+The scripts find their inputs through `git`, so run them from a clone, not from a zip download. The full pipeline (`eval/run_live.py tv | asr | decider | e2e | bench`) needs a running Strands Decider 2B server, AWS credentials with Bedrock, Transcribe and Polly in us-east-1, and the recorded audio, which is not in the repo (it is the author's voice). Paid calls go through `src/n8/spend.py`, which prices every call before it is made and stops at $5; the whole build, including the demo run and the platform repro, spent $1.68 by the worst-case ledger (`eval/out/spend.jsonl`).
 
 ## What this does not show
 
