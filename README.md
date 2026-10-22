@@ -1,6 +1,6 @@
 # Which Brain?
 
-![tests]({REPO_URL}/actions/workflows/tests.yml/badge.svg)
+![tests](https://github.com/NadyKor15/which-brain/actions/workflows/tests.yml/badge.svg)
 
 A hands-free kitchen helper for people who can't read a label. The phone is worn on the chest. For every phrase it hears, Strands Decider 2B decides whether the phrase was meant for the helper, whether it is about medicine, and which Amazon Nova model on Bedrock should answer: a quick one, one that looks at the label, or one that reads closely. On medicine it never guesses: it offers to call a person.
 
@@ -55,7 +55,7 @@ voice (phone on the chest)
 ## Run it
 
 ```bash
-git clone {REPO_URL} && cd which-brain
+git clone https://github.com/NadyKor15/which-brain && cd which-brain
 python3.12 -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev]"
 pytest                                            # 163 tests, no network, no AWS, no Decider server
