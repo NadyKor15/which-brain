@@ -32,6 +32,11 @@ def test_best_understood_take_wins():
     assert ids(align(ROWS, heard), heard) == [("p051", "How many ounces in a pound?")]
 
 
+def test_take_with_a_wrong_word_loses_to_an_accented_retake():
+    heard = ["How long do I boil an egg for salt?", "Хаунг дуай боил эн эг фо софт."]
+    assert ids(align(ROWS, heard), heard) == [("p046", "Хаунг дуай боил эн эг фо софт.")]
+
+
 def test_on_a_tie_the_later_take_wins():
     heard = ["Helper, what's in this can?", "Helper, what's in this can?"]
     assert align(ROWS, heard) == [(0, 1, 1)]

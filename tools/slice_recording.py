@@ -35,6 +35,14 @@ def sim(row, text):
                difflib.SequenceMatcher(None, norm(RU.get(row["id"], "")), t).ratio() if row["id"] in RU else 0.0)
 
 
+def take_score(row, text):
+    """For picking among takes: a wrong word must cost more than an accent, so Latin ASR is compared by words."""
+    t = norm(text)
+    if re.search(r"[a-z]", t):
+        return difflib.SequenceMatcher(None, norm(row["script_text"]).split(), t.split()).ratio()
+    return sim(row, text)
+
+
 def speech_spans(wav, noise_db, min_pause):
     err = subprocess.run([FFMPEG, "-hide_banner", "-i", wav, "-af", f"silencedetect=noise={noise_db}dB:d={min_pause}",
                           "-f", "null", "-"], capture_output=True, text=True).stderr
@@ -96,7 +104,7 @@ def align(rows, heard):
         limit = pairs[n + 1][1] if n + 1 < len(pairs) else S
         takes = [(a, b)] + [(x, y) for x in range(b + 1, limit) for y in range(x, min(x + MAX_JOIN, limit))
                             if sim(rows[i], joined(x, y)) >= RETAKE]
-        pairs[n] = (i, *max(takes, key=lambda p: (round(sim(rows[i], joined(*p)), 2), p[0])))
+        pairs[n] = (i, *max(takes, key=lambda p: (round(take_score(rows[i], joined(*p)), 2), p[0])))
     return pairs
 
 
