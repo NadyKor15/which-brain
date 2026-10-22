@@ -1,0 +1,43 @@
+{
+ "strands_agents": "1.62.0",
+ "model": "amazon.nova-micro-v1:0",
+ "ts": "2026-10-22T16:52:43Z",
+ "raw": [
+  {
+   "tool_asked": "_ClassifierSelection",
+   "stop_reason": "tool_use",
+   "tool_returned": [
+    "ClassifierSelection"
+   ],
+   "input": [
+    {
+     "selected_candidate_index": 1
+    }
+   ]
+  },
+  {
+   "tool_asked": "ClassifierSelection",
+   "stop_reason": "tool_use",
+   "tool_returned": [
+    "ClassifierSelection"
+   ],
+   "input": [
+    {
+     "selected_candidate_index": 1
+    }
+   ]
+  }
+ ],
+ "sdk": [
+  {
+   "pydantic_class": "_ClassifierSelection",
+   "output": "None",
+   "error": "ValueError: No valid tool use or tool use input was found in the Bedrock response."
+  },
+  {
+   "pydantic_class": "ClassifierSelection",
+   "output": "ClassifierSelection(selected_candidate_index=0)",
+   "error": null
+  }
+ ]
+}
