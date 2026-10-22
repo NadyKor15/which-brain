@@ -158,7 +158,13 @@ class SafetyFirstHandler(InterventionHandler):
         text_timeout: float = TEXT_TIMEOUT_S,
         vision_timeout: float = VISION_TIMEOUT_S,
         on_decision: Callable[[TurnDecision], None] | None = None,
+        near_mic: str = "state",
     ) -> None:
+        """``near_mic``: "state" shows the loudness flag to Decider, "off" leaves it out, and "code"
+        leaves it out of the state and makes a voice far from the chest microphone silent in code."""
+        if near_mic not in ("state", "off", "code"):
+            raise ValueError("near_mic must be 'state', 'off' or 'code'")
+        self._near_mic = near_mic
         self._name = name
         self._client = client
         self._cache = cache
@@ -208,7 +214,12 @@ class SafetyFirstHandler(InterventionHandler):
     # ------------------------------------------------------------------ the decision
 
     async def decide_turn(self, turn: Turn) -> TurnDecision:
-        state = rules_decide.text_state(turn.latest, turn.previous, turn.near_mic)
+        if self._near_mic == "code" and turn.near_mic is False:
+            td = TurnDecision(rules_decide.Decision("silent"))
+            td.decided_at = time.perf_counter()
+            return td
+        shown = turn.near_mic if self._near_mic == "state" else None
+        state = rules_decide.text_state(turn.latest, turn.previous, shown)
         try:
             resp = await asyncio.wait_for(
                 self._client.aask(state, self._questions), self._text_timeout

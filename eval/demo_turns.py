@@ -1,6 +1,6 @@
 """Real system output for the video overlay: chosen recorded phrases, end to end.
 
-    python eval/demo_turns.py p056 p118 p096 p001 p074        # paid (Transcribe cached, Nova, Polly), capped
+    python eval/demo_turns.py p056 p118 p096 p001 p074 --near-mic=code   # paid, capped
 
 For each phrase: what Transcribe heard, Decider's numbers (Q1-Q3 and, for a look, frame_check and
 item_is_medicine), the brain badge, the words said and the timing strip. Writes
@@ -22,14 +22,14 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "eval"))
 
 import run_live as rl  # noqa: E402
-from decider_kit import DeciderClient  # noqa: E402
 
+from decider_kit import DeciderClient  # noqa: E402
 from n8 import agent as n8agent  # noqa: E402
 from n8 import audio, earcons, speak  # noqa: E402
 from n8.brains import bedrock_brains  # noqa: E402
 
 
-def main(ids: list[str], near_mic: bool) -> None:
+def main(ids: list[str], near_mic: str) -> None:
     bp = n8agent.bp
     stamp = rl.stamp()
     out_dir = rl.OUT / f"demo-{stamp}"
@@ -41,8 +41,10 @@ def main(ids: list[str], near_mic: bool) -> None:
     brains = bedrock_brains(spend)
     polly = speak.Polly(spend)
     table = {r["id"]: r for r in csv.DictReader(rl.PHRASES.open())}
-    thr = json.loads(rl.latest("thresholds-*.json").read_text()).get("near_mic" if near_mic else "text")
-    fr = rl.frame_rows_from(next(iter(sorted((rl.MAIN / "eval" / "out").glob("frames-*.jsonl"))[-1:]), None))
+    thr = json.loads(rl.latest("thresholds-*.json").read_text()).get(rl.THRESHOLD_KEY[near_mic])
+    fr = rl.frame_rows_from(
+        next(iter(sorted((rl.MAIN / "eval" / "out").glob("frames-*.jsonl"))[-1:]), None)
+    )
     cache_asr = audio.TranscriptCache(rl.ASR_CACHE)
     turns = []
 
@@ -54,12 +56,14 @@ def main(ids: list[str], near_mic: bool) -> None:
             img = rl.load_frame(fr.get(i))
             turn = bp.Turn(
                 latest=t.text,
-                near_mic=asr_row.get("near_mic") if near_mic else None,
+                near_mic=asr_row.get("near_mic"),
                 frame=img,
                 has_camera=bool(r["frame_path"]),
             )
             cache = bp.DecisionCache()
-            agent = n8agent.build_agent(brains, DeciderClient(rl.URL, timeout=5), cache, thresholds=thr)
+            agent = n8agent.build_agent(
+                brains, DeciderClient(rl.URL, timeout=5), cache, thresholds=thr, near_mic=near_mic
+            )
             reply = await n8agent.run_turn(turn, agent, cache, brains)
             said = reply.said
             fb = None
@@ -101,5 +105,5 @@ def main(ids: list[str], near_mic: bool) -> None:
 
 
 if __name__ == "__main__":
-    args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    main(args, "--near-mic" in sys.argv)
+    mode = next((a.split("=", 1)[1] for a in sys.argv[1:] if a.startswith("--near-mic=")), "off")
+    main([a for a in sys.argv[1:] if not a.startswith("--")], mode)

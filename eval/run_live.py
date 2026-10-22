@@ -34,7 +34,7 @@ sys.path.insert(0, str(ROOT / "eval"))
 from decider_kit.client import ChoiceAnswer, DeciderClient, NoulAnswer  # noqa: E402
 from decider_kit.questions import load_questions  # noqa: E402
 from n8 import audio, baselines, frames, rules, speak  # noqa: E402
-from n8.decide import ITEM_MEDICINE_TAU, MEDICINE_KEYWORDS, decide  # noqa: E402
+from n8.decide import ITEM_MEDICINE_TAU, MEDICINE_KEYWORDS, Decision, decide  # noqa: E402
 from n8.spend import SpendCap  # noqa: E402
 
 
@@ -57,6 +57,7 @@ FRAME_MAP = ROOT / "eval" / "frame_map.csv"
 QUESTIONS = ROOT / "patterns" / "brain_picker" / "questions.yaml"
 URL = os.environ.get("STRANDS_DECIDER_URL", "http://127.0.0.1:18199")
 
+THRESHOLD_KEY = {"off": "text", "state": "near_mic", "code": "near_mic_code"}
 COSTS = {"missed_medicine": 100, "false_refusal": 1, "false_silence": 5, "false_wake": 2, "ask": 1}
 NEAR_ROLES = {"cook", "cook to someone else"}
 
@@ -366,17 +367,28 @@ def score_rows(
     return {"counts": dict(c), "misses": misses, "cost": cost}
 
 
-def router_decisions(raw: dict[str, dict[str, Any]], thr: dict[str, float]) -> tuple[dict, dict]:
-    """Decisions with these thresholds, and the decision after a "yes" to "Did you ask me?"."""
+def router_decisions(
+    raw: dict[str, dict[str, Any]], thr: dict[str, float], far_is_silent: bool = False
+) -> tuple[dict, dict]:
+    """Decisions with these thresholds, and the decision after a "yes" to "Did you ask me?".
+
+    ``far_is_silent``: the loudness flag used in code, not shown to Decider: a voice that is not
+    near the chest microphone is never the cook, so the turn is silent.
+    """
     dec, follow = {}, {}
     for k, v in raw.items():
+        if far_is_silent and v.get("near_mic") is False:
+            dec[k] = follow[k] = Decision("silent")
+            continue
         a, m, b = answers_of(v)
         dec[k] = decide(a, m, b, **thr)
         follow[k] = decide(NoulAnswer(1.0), m, b, **thr)
     return dec, follow
 
 
-def sweep(table: list[dict[str, str]], raw: dict[str, dict[str, Any]], gates) -> dict[str, float]:
+def sweep(
+    table: list[dict[str, str]], raw: dict[str, dict[str, Any]], gates, far_is_silent: bool = False
+) -> dict[str, float]:
     """Thresholds with the lowest error cost on the given (tuning) rows.
 
     Ties go to the lower medicine threshold (safer), then to the values closest to the start.
@@ -388,7 +400,7 @@ def sweep(table: list[dict[str, str]], raw: dict[str, dict[str, Any]], gates) ->
                 continue
             for m in (0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5):
                 thr = {"addressed_yes": y, "addressed_no": n, "medicine_tau": m}
-                dec, follow = router_decisions(raw, thr)
+                dec, follow = router_decisions(raw, thr, far_is_silent)
                 cost = score_rows(table, dec, gates, followups=follow)["cost"]
                 candidates.append(((cost, m, round(abs(y - 0.85) + abs(n - 0.15), 3)), thr))
     return min(candidates, key=lambda c: c[0])[1]
@@ -464,11 +476,15 @@ def cmd_score(args: argparse.Namespace) -> None:
             report.extend(f'- {i} · {what} · "{text}"' for i, what, text in s["misses"])
         report.append("")
 
-    for variant in ("text", "near_mic"):
-        raw = {x["id"]: x for x in raw_all if x["variant"] == variant}
-        if not raw:
+    for variant, source, far in (
+        ("text", "text", False),
+        ("near_mic", "near_mic", False),
+        ("near_mic_code", "text", True),
+    ):
+        raw = {x["id"]: x for x in raw_all if x["variant"] == source}
+        if not raw or (far and all(x.get("near_mic") is None for x in raw.values())):
             continue
-        thr = sweep(tune, raw, gates)
+        thr = sweep(tune, raw, gates, far)
         chosen[variant] = thr
         report.append(
             f"Thresholds for `{variant}` from error costs on tune ({len(tune)} rows): `{thr}`\n"
@@ -479,11 +495,13 @@ def cmd_score(args: argparse.Namespace) -> None:
                 split,
                 score_rows(
                     part,
-                    *router_decisions(raw, thr)[:1],
+                    *router_decisions(raw, thr, far)[:1],
                     gates,
-                    followups=router_decisions(raw, thr)[1],
+                    followups=router_decisions(raw, thr, far)[1],
                 ),
             )
+        if far:
+            continue  # (d) has no code rules, so it has no code-loudness variant
         add(
             f"d_no_gates[{variant}]",
             "held_out",
@@ -519,7 +537,7 @@ def cmd_score(args: argparse.Namespace) -> None:
         # tau curve
         curve = []
         for tau in (0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5):
-            dec_t, fol_t = router_decisions(raw, {**thr, "medicine_tau": tau})
+            dec_t, fol_t = router_decisions(raw, {**thr, "medicine_tau": tau}, far)
             s = score_rows(held, dec_t, gates, followups=fol_t)["counts"]
             curve.append(
                 f"| {tau} | {s.get('medicine_refused', 0)}/{s.get('medicine', 0)} | "
@@ -566,7 +584,7 @@ def cmd_e2e(args: argparse.Namespace) -> None:
     spend = cap()
     asr = {x["id"]: x for x in read_jsonl(latest("asr-*.jsonl"))}
     thr_all = json.loads(latest("thresholds-*.json").read_text())
-    thresholds = thr_all.get(args.near_mic and "near_mic" or "text")
+    thresholds = thr_all.get(THRESHOLD_KEY[args.near_mic])
     frames_path = next(iter(sorted((MAIN / "eval" / "out").glob("frames-*.jsonl"))[-1:]), None)
     fr = frame_rows_from(frames_path)
     table = [r for r in rows() if args.split == "all" or r["split"] == args.split]
@@ -587,14 +605,18 @@ def cmd_e2e(args: argparse.Namespace) -> None:
             img = load_frame(frm)
             t = bp.Turn(
                 latest=a["text"],
-                near_mic=a["near_mic"] if args.near_mic else None,
+                near_mic=a["near_mic"],
                 frame=img,
                 has_camera=bool(r["frame_path"]),
             )
             if args.variant == "router":
                 cache = bp.DecisionCache()
                 agent = n8agent.build_agent(
-                    brains, DeciderClient(URL, timeout=5), cache, thresholds=thresholds
+                    brains,
+                    DeciderClient(URL, timeout=5),
+                    cache,
+                    thresholds=thresholds,
+                    near_mic=args.near_mic,
                 )
                 reply = await n8agent.run_turn(t, agent, cache, brains)
             elif args.variant == "pro":
@@ -841,7 +863,7 @@ def main() -> None:
     e = sub.add_parser("e2e")
     e.add_argument("--variant", choices=["router", "pro", "classifier"], required=True)
     e.add_argument("--split", default="all", choices=["all", "tune", "held_out"])
-    e.add_argument("--near-mic", action="store_true")
+    e.add_argument("--near-mic", choices=["off", "state", "code"], default="off")
     e.add_argument("--limit", type=int)
     b = sub.add_parser("bench")
     b.add_argument("--variants", nargs="+", default=["router", "pro"])

@@ -457,3 +457,20 @@ def test_worst_case_price_covers_the_calls_seen_on_bedrock():
     assert worst_case_usd("pro", img, SYSTEM_PROMPT, 160) >= nova_usd(
         "pro", 1692, 8
     )  # seen: 1692 in
+
+
+def test_near_mic_modes_state_off_and_code(tmp_path):
+    server = text_server(addressed=0.95)
+    cache = bp.DecisionCache()
+    shown = bp.SafetyFirstHandler(server.client(), cache, near_mic="state")
+    asyncio.run(shown.decide_turn(turn(near_mic=False)))
+    assert '"near_mic": false' in server.requests[-1]["state"]
+    off = bp.SafetyFirstHandler(server.client(), cache, near_mic="off")
+    asyncio.run(off.decide_turn(turn(near_mic=False)))
+    assert "near_mic" not in server.requests[-1]["state"]
+    n = len(server.requests)
+    code = bp.SafetyFirstHandler(server.client(), cache, near_mic="code")
+    td = asyncio.run(code.decide_turn(turn(near_mic=False)))
+    assert td.decision.action == "silent" and len(server.requests) == n  # no Decider call
+    td = asyncio.run(code.decide_turn(turn(near_mic=True)))
+    assert td.decision.action == "answer" and "near_mic" not in server.requests[-1]["state"]

@@ -62,12 +62,15 @@ def build_agent(
     strategy: Any = None,
     thresholds: dict[str, float] | None = None,
     on_decision: Any = None,
+    near_mic: str = "state",
 ) -> Agent:
     router = ModelRouter(
         bp.brain_candidates(brains.micro, brains.lite, brains.pro),
         strategy=strategy or bp.DeciderRoutingStrategy(cache),
     )
-    handler = bp.SafetyFirstHandler(client, cache, thresholds=thresholds, on_decision=on_decision)
+    handler = bp.SafetyFirstHandler(
+        client, cache, thresholds=thresholds, on_decision=on_decision, near_mic=near_mic
+    )
     return Agent(
         model=router,
         interventions=[handler],
