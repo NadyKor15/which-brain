@@ -6,7 +6,6 @@ import importlib.util
 from pathlib import Path
 
 from decider_kit.client import ChoiceAnswer, NoulAnswer
-
 from n8 import baselines
 
 RUNNER = Path(__file__).resolve().parents[1] / "eval" / "run_live.py"
@@ -139,3 +138,37 @@ def test_invented_numbers_are_numbers_not_on_the_label():
     label = "TOMATO SOUP NET WT 14.1 OZ (400 g) Heat 5 minutes"
     assert rl.invented_numbers("Tomato soup, 400 grams.", label) == []
     assert rl.invented_numbers("Tomato soup, 450 grams. Heat 5 minutes.", label) == ["450"]
+
+
+def test_nova_classifier_strategy_reads_the_renamed_tool_and_returns_the_candidate():
+    import asyncio
+    from typing import Any
+
+    from strands.models.model import Model
+    from strands.models.routing import RoutingCandidate, RoutingContext
+
+    class Fake(Model):
+        def update_config(self, **kw: Any) -> None: ...
+        def get_config(self) -> Any:
+            return {}
+
+        async def stream(self, *a, **k):
+            yield {}
+
+        async def structured_output(self, output_model, prompt, system_prompt=None, **kw):
+            assert output_model.__name__ == "ClassifierSelection"  # no leading underscore
+            yield {"output": output_model(selected_candidate_index=1)}
+
+    class M(Fake):
+        pass
+
+    cands = (RoutingCandidate(M(), name="quiet_answer"), RoutingCandidate(M(), name="look"))
+    ctx = RoutingContext(
+        messages=[{"role": "user", "content": [{"text": "What's this can?"}]}],
+        system_prompt=None,
+        tool_specs=[],
+        candidates=cands,
+        invocation_state={},
+    )
+    got = asyncio.run(baselines.nova_classifier_strategy(Fake()).select(ctx))
+    assert got is cands[1]

@@ -692,7 +692,7 @@ async def classifier_turn(t: Any, brains: Any, bp: Any) -> Any:
     """
     from pydantic import BaseModel, Field
     from strands import Agent
-    from strands.models.routing import ClassifierStrategy, ModelRouter
+    from strands.models.routing import ModelRouter
 
     from n8 import agent as n8agent
 
@@ -728,24 +728,27 @@ async def classifier_turn(t: Any, brains: Any, bp: Any) -> Any:
                 BedrockModel(
                     model_id="amazon.nova-micro-v1:0",
                     region_name="us-east-1",
-                    max_tokens=60,
+                    max_tokens=200,
                     temperature=0.0,
                 ),
                 "micro",
                 brains.micro.cap,
-                60,
+                200,
             )
             brains.extra["classifier"] = extra
         routed: dict[str, str] = {}
 
-        class Spy(ClassifierStrategy):
-            async def select(self, context, **kw):
-                c = await super().select(context, **kw)
-                routed["name"] = c.name if c is not None else "declined"
-                return c
+        strategy = baselines.nova_classifier_strategy(extra)
+        inner_select = strategy.select
 
+        async def spy(context, **kw):
+            c = await inner_select(context, **kw)
+            routed["name"] = c.name if c is not None else "declined"
+            return c
+
+        strategy.select = spy  # instance attribute: the router calls strategy.select
         router = ModelRouter(
-            bp.brain_candidates(brains.micro, brains.lite, brains.pro), strategy=Spy(extra)
+            bp.brain_candidates(brains.micro, brains.lite, brains.pro), strategy=strategy
         )
         content: list[dict[str, Any]] = [{"text": t.latest}]
         gate = frames.check(t.frame) if t.has_camera else None

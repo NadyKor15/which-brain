@@ -10,6 +10,7 @@
 from __future__ import annotations
 
 import re
+from typing import Any
 
 from decider_kit.client import ChoiceAnswer, NoulAnswer
 
@@ -59,3 +60,58 @@ def no_gates_decide(addressed: NoulAnswer, medicine: NoulAnswer, brain: ChoiceAn
         medicine_tau=0.5,
         brain_sure=0.0,
     )
+
+
+# ---------------------------------------------------------------- (b) on Nova
+
+
+def nova_classifier_strategy(model: Any, **kwargs: Any) -> Any:
+    """Strands ClassifierStrategy that works with Amazon Nova on Bedrock.
+
+    Strands 1.61.1 asks for its routing choice through a tool named ``_ClassifierSelection``;
+    Nova answers with a tool named ``ClassifierSelection`` (no leading underscore), so the SDK finds
+    no tool use and every classification is declined (the router then serves candidate zero).
+    Seen on 2026-10-22 with Nova Micro and Lite. This subclass asks with the same schema under a
+    name without the underscore; the policy prompt, limits and fallbacks are the SDK's own.
+    """
+    from collections.abc import Mapping
+
+    from strands.models.routing import ClassifierStrategy
+    from strands.models.routing import classifier_strategy as cs
+
+    selection = type("ClassifierSelection", (cs._ClassifierSelection,), {})
+
+    class NovaClassifierStrategy(ClassifierStrategy):
+        async def _classify(self, context: Any, profiles: Any) -> int:
+            events = self._model.structured_output(
+                selection,
+                [
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "text": cs._latest_request_text(
+                                    context.messages, self._max_message_chars
+                                )
+                            }
+                        ],
+                    }
+                ],
+                system_prompt=cs._build_classifier_system_prompt(
+                    profiles,
+                    context.system_prompt,
+                    self._system_prompt,
+                    self._max_agent_instructions_chars,
+                ),
+            )
+            output = None
+            async for event in events:
+                if isinstance(event, Mapping) and "output" in event:
+                    output = event["output"]
+            if not isinstance(output, selection):
+                raise ValueError("classifier returned an invalid structured result")
+            if output.selected_candidate_index >= len(context.candidates):
+                raise ValueError("classifier selected an unknown candidate")
+            return output.selected_candidate_index
+
+    return NovaClassifierStrategy(model, **kwargs)
