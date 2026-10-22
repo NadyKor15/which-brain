@@ -27,9 +27,14 @@ def test_retake_after_mistake_wins_and_false_start_is_skipped():
     assert ids(align(ROWS, heard), heard) == [("p046", "How long do I boil an egg for soft?")]
 
 
-def test_retake_wins_even_when_the_first_try_reads_better():
+def test_best_understood_take_wins():
     heard = ["How many ounces in a pound?", "Хау мани аунсиз ин э паунд."]
-    assert ids(align(ROWS, heard), heard) == [("p051", "Хау мани аунсиз ин э паунд.")]
+    assert ids(align(ROWS, heard), heard) == [("p051", "How many ounces in a pound?")]
+
+
+def test_on_a_tie_the_later_take_wins():
+    heard = ["Helper, what's in this can?", "Helper, what's in this can?"]
+    assert align(ROWS, heard) == [(0, 1, 1)]
 
 
 def test_cyrillic_take_matches_its_russian_hint():

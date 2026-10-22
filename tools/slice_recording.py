@@ -8,7 +8,7 @@ sections in order (1 cook · 2 cook to someone else · 3 child · 4 another adul
 take may cover any part of it, stop early or jump ahead. A phrase may span up to three
 pieces ("Helper," … pause … "is this one still good?"). The local ASR sometimes writes
 accented English in Cyrillic, so each phrase is also compared with its Russian-letter hint.
-A repeat after a mistake wins over the first try. Output: eval/audio/<id>.wav (16 kHz
+Of several takes of one phrase, the one the ASR understood best wins (on a tie, the later). Output: eval/audio/<id>.wav (16 kHz
 mono) and eval/audio/slice-<take>.tsv (matched, unused pieces), plus how many are missing.
 """
 import csv, difflib, json, os, re, subprocess, sys, tempfile
@@ -90,13 +90,13 @@ def align(rows, heard):
         else:
             i -= 1
     pairs = pairs[::-1]
-    # A repeat after a mistake: the latest good take before the next matched phrase wins.
+    # Several takes of one phrase (Nadya TG 1078: "pick the best pronunciation"): among the good
+    # takes up to the next matched phrase, the one the ASR understood best wins; on a tie, the later.
     for n, (i, a, b) in enumerate(pairs):
         limit = pairs[n + 1][1] if n + 1 < len(pairs) else S
-        later = [(x, y) for x in range(b + 1, limit) for y in range(x, min(x + MAX_JOIN, limit))
-                 if sim(rows[i], joined(x, y)) >= RETAKE]
-        if later:
-            pairs[n] = (i, *max(later, key=lambda p: (p[0], sim(rows[i], joined(*p)))))
+        takes = [(a, b)] + [(x, y) for x in range(b + 1, limit) for y in range(x, min(x + MAX_JOIN, limit))
+                            if sim(rows[i], joined(x, y)) >= RETAKE]
+        pairs[n] = (i, *max(takes, key=lambda p: (round(sim(rows[i], joined(*p)), 2), p[0])))
     return pairs
 
 
