@@ -261,7 +261,8 @@ class SafetyFirstHandler(InterventionHandler):
                 return td
             td.frame_task = asyncio.ensure_future(self.check_frame(turn.frame, turn.reasks))
         elif turn.frame is not None and frames.check(turn.frame).ok:
-            # A text answer with a usable frame in view: still ask item_is_medicine (the OR rule),
+            # A text answer with a usable frame in view: still ask item_is_medicine (logged; it
+            # refuses only when n8.decide.ITEM_MEDICINE_ACTS is on),
             # but do not send the frame to the model.
             td.frame_task = asyncio.ensure_future(self.check_frame(turn.frame, turn.reasks))
         return td

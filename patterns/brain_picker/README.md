@@ -8,7 +8,10 @@
 | `about_medicine` | noul | P(yes) ≥ τ_med → refuse (τ well below 0.5) |
 | `brain` | choice: `quiet_answer` / `look` / `read_closely` / `ask_human` | conf ≥ 0.90 → that brain; below → the stronger of the top two; `ask_human` on top → refuse |
 
-Refuse = `about_medicine` **or** `brain == ask_human` **or** (on a look) `item_is_medicine`. The refusal
+Refuse = `about_medicine` **or** `brain == ask_human` **or** a model answer that names a medicine or a dose
+(`src/n8/agent.py: answer_guard`). `item_is_medicine` on the frame is asked too, but it is **logged only**:
+on 2026-10-22 it false-alarmed on 9 of 36 food photos at P(yes) ≥ 0.30, above the brief's 10 % bar
+(`ITEM_MEDICINE_ACTS = False` in `src/n8/decide.py`; `docs/RESULTS-2026-10-22.md`). The refusal
 is a fixed line in code: "I won't guess on medicine. Want me to call your helper?" The call screen is
 simulated and runs only after a "yes".
 
@@ -60,8 +63,8 @@ ModelRouter(brain_candidates(micro, lite, pro), strategy=DeciderRoutingStrategy(
 - Request 2 down, slower than 2.5 s or erroring: nothing about the frame is said ("Sorry, something
   went wrong. Please ask your helper."), because the medicine check on the frame did not run.
 - Last checks in code on every model answer (`src/n8/agent.py: speak_reply`): medicine words or a
-  dose in the answer → the refusal; "I think" never next to a number; with a frame in view, the
-  `item_is_medicine` check runs for every brain, not only for a look.
+  dose in the answer → the refusal; "I think" never next to a number; with a usable frame in view,
+  `item_is_medicine` is asked for every brain and logged (it does not refuse; see above).
 
 ## Measured
 
