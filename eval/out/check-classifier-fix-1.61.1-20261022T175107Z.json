@@ -1,0 +1,30 @@
+{
+ "strands_agents": "1.61.1",
+ "ts": "2026-10-22T17:51:07Z",
+ "rows": [
+  {
+   "id": "p041",
+   "gold_brain": "quiet_answer",
+   "routed": "declined",
+   "answer_error": null
+  },
+  {
+   "id": "p084",
+   "gold_brain": "ask_human",
+   "routed": "declined",
+   "answer_error": null
+  },
+  {
+   "id": "p042",
+   "gold_brain": "quiet_answer",
+   "routed": "declined",
+   "answer_error": null
+  },
+  {
+   "id": "p043",
+   "gold_brain": "quiet_answer",
+   "routed": "declined",
+   "answer_error": null
+  }
+ ]
+}

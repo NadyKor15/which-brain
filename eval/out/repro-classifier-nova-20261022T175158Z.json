@@ -1,0 +1,43 @@
+{
+ "strands_agents": "1.62.1.dev34+ga50ad6ea",
+ "model": "amazon.nova-micro-v1:0",
+ "ts": "2026-10-22T17:51:58Z",
+ "raw": [
+  {
+   "tool_asked": "_ClassifierSelection",
+   "stop_reason": "tool_use",
+   "tool_returned": [
+    "ClassifierSelection"
+   ],
+   "input": [
+    {
+     "selected_candidate_index": 1
+    }
+   ]
+  },
+  {
+   "tool_asked": "ClassifierSelection",
+   "stop_reason": "tool_use",
+   "tool_returned": [
+    "ClassifierSelection"
+   ],
+   "input": [
+    {
+     "selected_candidate_index": 1
+    }
+   ]
+  }
+ ],
+ "sdk": [
+  {
+   "pydantic_class": "ClassifierSelection",
+   "output": "ClassifierSelection(selected_candidate_index=1)",
+   "error": null
+  },
+  {
+   "pydantic_class": "ClassifierSelection",
+   "output": "ClassifierSelection(selected_candidate_index=0)",
+   "error": null
+  }
+ ]
+}

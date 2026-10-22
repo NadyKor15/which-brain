@@ -1505,3 +1505,25 @@
 {"ts": "2026-10-22T16:52:43Z", "what": "repro classifier raw ClassifierSelection", "usd": 9.4e-05}
 {"ts": "2026-10-22T16:52:44Z", "what": "repro classifier sdk _ClassifierSelection", "usd": 9.4e-05}
 {"ts": "2026-10-22T16:52:44Z", "what": "repro classifier sdk ClassifierSelection", "usd": 9.4e-05}
+{"ts": "2026-10-22T17:50:54Z", "what": "bedrock micro structured", "usd": 9e-05}
+{"ts": "2026-10-22T17:50:54Z", "what": "bedrock micro images=0", "usd": 2.6e-05}
+{"ts": "2026-10-22T17:51:07Z", "what": "bedrock micro structured", "usd": 9.7e-05}
+{"ts": "2026-10-22T17:51:08Z", "what": "bedrock micro images=0", "usd": 3.3e-05}
+{"ts": "2026-10-22T17:51:08Z", "what": "bedrock micro structured", "usd": 9.7e-05}
+{"ts": "2026-10-22T17:51:08Z", "what": "bedrock micro images=0", "usd": 3.3e-05}
+{"ts": "2026-10-22T17:51:09Z", "what": "bedrock micro structured", "usd": 9.7e-05}
+{"ts": "2026-10-22T17:51:09Z", "what": "bedrock micro images=0", "usd": 3.4e-05}
+{"ts": "2026-10-22T17:51:10Z", "what": "bedrock micro structured", "usd": 9.7e-05}
+{"ts": "2026-10-22T17:51:10Z", "what": "bedrock micro images=0", "usd": 3.4e-05}
+{"ts": "2026-10-22T17:51:46Z", "what": "bedrock micro structured", "usd": 9.7e-05}
+{"ts": "2026-10-22T17:51:47Z", "what": "bedrock pro images=0", "usd": 0.000766}
+{"ts": "2026-10-22T17:51:47Z", "what": "bedrock micro structured", "usd": 9.7e-05}
+{"ts": "2026-10-22T17:51:48Z", "what": "bedrock pro images=0", "usd": 0.000766}
+{"ts": "2026-10-22T17:51:48Z", "what": "bedrock micro structured", "usd": 9.7e-05}
+{"ts": "2026-10-22T17:51:49Z", "what": "bedrock micro images=0", "usd": 3.4e-05}
+{"ts": "2026-10-22T17:51:49Z", "what": "bedrock micro structured", "usd": 9.7e-05}
+{"ts": "2026-10-22T17:51:49Z", "what": "bedrock micro images=0", "usd": 3.4e-05}
+{"ts": "2026-10-22T17:51:58Z", "what": "repro classifier raw _ClassifierSelection", "usd": 9.4e-05}
+{"ts": "2026-10-22T17:51:59Z", "what": "repro classifier raw ClassifierSelection", "usd": 9.4e-05}
+{"ts": "2026-10-22T17:51:59Z", "what": "repro classifier sdk ClassifierSelection", "usd": 9.4e-05}
+{"ts": "2026-10-22T17:52:00Z", "what": "repro classifier sdk ClassifierSelection", "usd": 9.4e-05}
