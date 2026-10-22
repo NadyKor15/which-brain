@@ -64,39 +64,53 @@ def main(ids: list[str], near_mic: str) -> None:
             agent = n8agent.build_agent(
                 brains, DeciderClient(rl.URL, timeout=5), cache, thresholds=thr, near_mic=near_mic
             )
-            reply = await n8agent.run_turn(turn, agent, cache, brains)
-            said = reply.said
-            fb = None
-            if said:
-                s = polly.say(said)
-                fb = s.first_byte_ms
-                speak.write_wav(wav_dir / f"{i}-reply.wav", s.pcm)
-            turns.append(
-                {
-                    "id": i,
-                    "script": r["script_text"],
-                    "heard": t.text,
-                    "speaker_role": r["speaker_role"],
-                    "near_mic": turn.near_mic,
-                    "decider": reply.probs,
-                    "frame": reply.frame_probs,
-                    "action": reply.action,
-                    "brain_badge": reply.routed,
-                    "model": reply.model,
-                    "verdict": reply.verdict,
-                    "earcon": reply.earcon,
-                    "model_answer": reply.answer,
-                    "said": said,
-                    "timing_ms": {
-                        "transcribe_final_after_speech": t.final_after_eos_ms,
-                        **reply.ms,
-                        "polly_first_byte": fb,
-                    },
-                    "usd": reply.usd,
-                    "measured_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-                }
-            )
-            print(i, reply.action, reply.routed or "", reply.verdict or "", "|", said)
+            replies = [(i, await n8agent.run_turn(turn, agent, cache, brains))]
+            if replies[0][1].action == "ask" and r["gold_addressed"] == "Y":
+                turn.confirmed = True  # the cook says "yes"
+                cache2 = bp.DecisionCache()
+                agent2 = n8agent.build_agent(
+                    brains,
+                    DeciderClient(rl.URL, timeout=5),
+                    cache2,
+                    thresholds=thr,
+                    near_mic=near_mic,
+                )
+                replies.append(
+                    (f"{i}-after-yes", await n8agent.run_turn(turn, agent2, cache2, brains))
+                )
+            for key, reply in replies:
+                said = reply.said
+                fb = None
+                if said:
+                    s = polly.say(said)
+                    fb = s.first_byte_ms
+                    speak.write_wav(wav_dir / f"{key}-reply.wav", s.pcm)
+                turns.append(
+                    {
+                        "id": key,
+                        "script": r["script_text"],
+                        "heard": t.text,
+                        "speaker_role": r["speaker_role"],
+                        "near_mic": turn.near_mic,
+                        "decider": reply.probs,
+                        "frame": reply.frame_probs,
+                        "action": reply.action,
+                        "brain_badge": reply.routed,
+                        "model": reply.model,
+                        "verdict": reply.verdict,
+                        "earcon": reply.earcon,
+                        "model_answer": reply.answer,
+                        "said": said,
+                        "timing_ms": {
+                            "transcribe_final_after_speech": t.final_after_eos_ms,
+                            **reply.ms,
+                            "polly_first_byte": fb,
+                        },
+                        "usd": reply.usd,
+                        "measured_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                    }
+                )
+                print(key, reply.action, reply.routed or "", reply.verdict or "", "|", said)
 
     asyncio.run(go())
     (out_dir / "overlay.json").write_text(json.dumps(turns, indent=1, default=str))
