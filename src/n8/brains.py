@@ -183,11 +183,12 @@ class Brains:
         return [self.micro, self.lite, self.pro, *self.extra.values()]
 
     def take_calls(self) -> list[Call]:
+        """Every call since the last take, in the order they started."""
         out: list[Call] = []
         for m in self.all():
             out.extend(m.calls)
             m.calls = []
-        return out
+        return sorted(out, key=lambda c: c.started)
 
 
 def bedrock_brains(cap: SpendCap, *, region: str = REGION, max_tokens: int = MAX_TOKENS) -> Brains:

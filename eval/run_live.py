@@ -774,8 +774,13 @@ async def classifier_turn(t: Any, brains: Any, bp: Any) -> Any:
     calls = brains.take_calls()
     reply.calls = [n8agent._call_row(c) for c in calls]
     reply.usd = round(sum(c.usd for c in calls), 7)
-    answered = [
-        c for c in calls if not c.estimated and c.error is None and c.first_token_ms is not None
+    answered = [  # the answering call: after the Micro judge, not the judge or the classifier
+        c
+        for c in calls
+        if c.started > decided
+        and not c.estimated
+        and c.error is None
+        and c.first_token_ms is not None
     ]
     reply.ms = {
         "decided_ms": round((decided - started) * 1000, 1),
@@ -1107,6 +1112,13 @@ def cmd_bench(args: argparse.Namespace) -> None:
             f" – {cost['full_stack_per_1000_15s_minimum']}** (Lambda not built).\n"
         )
         summary["variants"][variant] = table
+    load = subprocess.run(
+        ["ssh", "-o", "ConnectTimeout=5", "mini", "uptime"], capture_output=True, text=True
+    )
+    summary["mini_uptime_at_bench"] = load.stdout.strip()
+    md.append(
+        f"Mac mini load when the bench ran: `{load.stdout.strip()}` (shared with other jobs)."
+    )
     rtt = []
     with DeciderClient(URL, timeout=5) as client:
         for _ in range(20):
