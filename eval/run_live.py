@@ -1,4 +1,4 @@
-"""Which Brain? on the recorded phrases (brief §5-§6). Stages, in order:
+"""Which Brain? on the recorded phrases. Stages, in order:
 
     python eval/run_live.py tv        # synthetic radio/TV lines p008-p012 (Polly; paid, capped)
     python eval/run_live.py asr       # Transcribe every recorded phrase once (paid, capped, cached)

@@ -1,4 +1,4 @@
-# Q1 wording variants, measured on the tune split only (brief §2). A = questions.yaml.
+# Q1 wording variants, measured on the tune split only. A = questions.yaml.
 A:
   type: noul
   instructions: Is the latest utterance a request to the kitchen assistant, rather than speech meant for another person, a pet, the radio or the TV?

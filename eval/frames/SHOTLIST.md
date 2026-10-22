@@ -1,4 +1,4 @@
-# Frame shot list (sent to Nadya, TG 750, 2026-10-20)
+# Frame shot list
 
 Phone at chest height. 11 labels × 3 shots, in this order, then 3 no-image shots = 36 frames. Sent as files (full resolution).
 

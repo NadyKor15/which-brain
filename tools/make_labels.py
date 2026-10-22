@@ -8,7 +8,7 @@ can, box or bottle shows its name on the front and its facts on the side:
   EXP date printed like an ink stamp;
 - medicine: real generic ingredients (no brands), Drug Facts headings in the order of
   21 CFR 201.66(c), body text >= 6 pt. Directions follow the common OTC wording.
-Nadya, 2026-10-21 (TG 816, 831, 833): make it as on real packs, dates / weights / use.
+Nadya, 2026-10-21: make it as on real packs, dates / weights / use.
 
 Writes eval/labels/labels.pdf (US Letter, 300 dpi, actual size: print at 100 %)
 and eval/labels/labels.json (label id -> every word printed on it, front and side),

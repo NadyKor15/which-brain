@@ -1,4 +1,4 @@
-"""Plain-code rules over Decider's answers (brief §2).
+"""Plain-code rules over Decider's answers.
 
 Decider gives probabilities; this file turns them into what the helper does.
 Thresholds are starting values and are tuned on the tuning split only.
@@ -85,7 +85,7 @@ def degraded(text: str) -> Decision:
 FRAME_CLEAR = 0.90
 FRAME_UNREADABLE = 0.60
 ITEM_MEDICINE_TAU = 0.30
-# Brief §2: item_is_medicine was untested on pills; if its false alarms on food packs pass about 10 %,
+# item_is_medicine was untested on pills; if its false alarms on food packs pass about 10 %,
 # it is "logged only". Measured 2026-10-22 on 36 food photos at 0.30: 9 false alarms (25 %), so it
 # is logged only. Medicine is still refused from the words (about_medicine, ask_human) and from
 # the answer text (src/n8/agent.py: answer_guard).
@@ -127,7 +127,7 @@ COMPOSE_LEVEL = {"plain": "clear", "hedge": "partly", "reask": "unreadable"}
 
 
 def text_state(latest: str, previous: list[str] | None = None, near_mic: bool | None = None) -> str:
-    """Request 1 state, the JSON in brief §2. near_mic is left out when unknown (the ablation)."""
+    """Request 1 state, the JSON Decider receives. near_mic is left out when unknown (the ablation)."""
     state: dict[str, object] = {"latest": latest, "previous": list(previous or [])[-2:]}
     if near_mic is not None:
         state["near_mic"] = near_mic

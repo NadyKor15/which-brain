@@ -1,4 +1,4 @@
-# Which Brain? — Request 2, with the frame (brief §2).
+# Which Brain? — Request 2, with the frame.
 frame_check:
   type: choice
   instructions: Can the printed text on the item in this picture be read?

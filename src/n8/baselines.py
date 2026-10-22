@@ -1,4 +1,4 @@
-"""Baselines on the same frozen phrases (brief §6).
+"""Baselines on the same frozen phrases.
 
 (c) keyword/regex router plus the code gates, no model. The word lists were written by us
     with the phrase list in view, so they flatter (c); a real kitchen would not be this kind.

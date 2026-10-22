@@ -10,14 +10,14 @@
 
 Refuse = `about_medicine` **or** `brain == ask_human` **or** a model answer that names a medicine or a dose
 (`src/n8/agent.py: answer_guard`). `item_is_medicine` on the frame is asked too, but it is **logged only**:
-on 2026-10-22 it false-alarmed on 9 of 36 food photos at P(yes) ≥ 0.30, above the brief's 10 % bar
+on 2026-10-22 it false-alarmed on 9 of 36 food photos at P(yes) ≥ 0.30, above the 10 % bar set in the design
 (`ITEM_MEDICINE_ACTS = False` in `src/n8/decide.py`; `docs/RESULTS-2026-10-22.md`). The refusal
 is a fixed line in code: "I won't guess on medicine. Want me to call your helper?" The call screen is
 simulated and runs only after a "yes".
 
 Thresholds on a noul are set on **P(yes)**, never on "confidence": Decider returns P(true) only, and
 `max(p, 1 - p)` hides which side it is on. Values come from error costs on the tuning split
-(`eval/run_live.py score`, costs in the brief's task card: missed medicine 100, false silence 5,
+(`eval/run_live.py score`, error costs set before measuring: missed medicine 100, false silence 5,
 false wake 2, false refusal 1, "Did you ask me?" 1).
 
 ## Drop-in (Strands 1.61.1, `strands.models.routing` is provisional)

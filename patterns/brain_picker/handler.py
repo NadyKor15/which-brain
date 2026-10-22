@@ -53,7 +53,7 @@ LADDER = ("quiet_answer", "look", "read_closely")
 STRONGEST = "read_closely"
 IMAGE_BRAINS = {"look", "read_closely"}
 
-TEXT_TIMEOUT_S = 1.5  # TARGET (brief §2); past it the keyword net decides
+TEXT_TIMEOUT_S = 1.5  # TARGET; past it the keyword net decides
 VISION_TIMEOUT_S = 2.5
 
 SORRY = "Sorry, something went wrong. Please ask your helper."

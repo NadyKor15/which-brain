@@ -1,4 +1,4 @@
-"""Write eval/phrases.csv: the 120-phrase minimum set (brief §5).
+"""Write eval/phrases.csv: the 120-phrase minimum set.
 
 Gold labels are set here, by construction, before any tuning. Run once;
 after recording, freeze with tools/freeze.py (sha256 of the csv and audio).

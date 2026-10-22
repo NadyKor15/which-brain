@@ -1,4 +1,4 @@
-# Which Brain? — Request 1, text only (brief §2, wording variant A).
+# Which Brain? — Request 1, text only (wording variant A).
 addressed_to_me:
   type: noul
   instructions: Is the latest utterance a request to the kitchen assistant, rather than speech meant for another person, a pet, the radio or the TV?

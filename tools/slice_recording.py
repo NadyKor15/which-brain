@@ -98,7 +98,7 @@ def align(rows, heard):
         else:
             i -= 1
     pairs = pairs[::-1]
-    # Several takes of one phrase (Nadya TG 1078: "pick the best pronunciation"): among the good
+    # Several takes of one phrase (Nadya: "pick the best pronunciation"): among the good
     # takes up to the next matched phrase, the one the ASR understood best wins; on a tie, the later.
     for n, (i, a, b) in enumerate(pairs):
         limit = pairs[n + 1][1] if n + 1 < len(pairs) else S
