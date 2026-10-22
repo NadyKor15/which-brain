@@ -50,7 +50,7 @@ voice (phone on the chest)
 
 ## Platform finding: Strands `ClassifierStrategy` declines every choice on Amazon Nova
 
-`ClassifierStrategy` (strands-agents 1.61.1) asks for its choice through a tool named after its pydantic class, `_ClassifierSelection`. Nova on Bedrock answers with a tool named `ClassifierSelection`, without the underscore, even when the tool is forced; `BedrockModel.structured_output` finds no tool use with the expected name, raises, and the strategy declines, so the router always serves candidate zero. Repro: `python tools/repro_classifier_nova.py` (four Nova Micro calls). Workaround: `src/n8/baselines.py`, `nova_classifier_strategy`. Upstream issue: {ISSUE_URL}.
+`ClassifierStrategy` (strands-agents 1.61.1) asks for its choice through a tool named after its pydantic class, `_ClassifierSelection`. Nova on Bedrock answers with a tool named `ClassifierSelection`, without the underscore, even when the tool is forced; `BedrockModel.structured_output` finds no tool use with the expected name, raises, and the strategy declines, so the router always serves candidate zero. Repro: `python tools/repro_classifier_nova.py` (four Nova Micro calls). Workaround: `src/n8/baselines.py`, `nova_classifier_strategy`. Upstream issue: https://github.com/strands-agents/harness-sdk/issues/5431 (also reproduced on 1.62.0).
 
 ## Run it
 
