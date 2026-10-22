@@ -931,7 +931,14 @@ def cmd_e2e_score(args: argparse.Namespace) -> None:
                     f'- {x["id"]} false refusal ({x.get("verdict")}): heard "{x.get("heard")}"'
                 )
             m = fmap.get(x["id"])
-            if m and m["label"] in labels and x.get("answer") and r["cat"] in ("B", "D", "E", "G"):
+            # questions about the label only (gold look / read_closely): a cup-in-grams answer is
+            # kitchen knowledge, not a reading of the pack
+            if (
+                m
+                and m["label"] in labels
+                and x.get("answer")
+                and r["gold_brain"] in ("look", "read_closely")
+            ):
                 text = labels[m["label"]]["text"]
                 bad = invented_numbers(x["answer"], text)
                 c["frame_answers"] += 1
