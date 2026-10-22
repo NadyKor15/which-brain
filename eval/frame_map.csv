@@ -1,0 +1,50 @@
+id,label,level,expect
+p022,soup,clear,tomato soup
+p024,pasta,clear,
+p026,rice,clear,
+p028,bread_mix,clear,
+p030,soup_seasoning,clear,soup seasoning
+p032,sugar,clear,
+p034,sugar,clear,sugar
+p036,bread_mix,clear,
+p038,bread_mix,clear,
+p040,salt,clear,salt
+p056,soup,clear,tomato soup
+p057,bread_mix,clear,banana bread
+p058,soup,clear,tomato soup
+p059,paprika,clear,paprika
+p060,pasta,clear,rotini
+p061,soup,clear,tomato soup
+p062,rice,clear,rice
+p063,sugar,clear,sugar
+p064,soup_seasoning,clear,soup seasoning
+p065,salt,clear,salt
+p066,rice,clear,rice
+p067,paprika,clear,paprika
+p068,soup_seasoning,clear,soup seasoning
+p069,pasta,clear,rotini
+p070,rice,clear,rice
+p071,bread_mix,clear,
+p072,bread_mix,clear,
+p073,pasta,clear,
+p074,rice,clear,
+p075,soup,clear,
+p076,soup,clear,
+p077,pasta,clear,
+p078,bread_mix,clear,
+p079,soup,clear,
+p080,bread_mix,clear,
+p081,pain_relief,clear,
+p082,pain_relief,clear,
+p083,sleep_aid,clear,
+p085,vitamin_d,clear,
+p086,sleep_aid,clear,
+p090,vitamin_d,clear,
+p111,bread_mix,clear,
+p112,soup,clear,
+p114,soup_seasoning,clear,
+p116,none,missing,
+p117,none,dark,
+p118,none,blurred,
+p119,none,dark,
+p120,none,blurred,

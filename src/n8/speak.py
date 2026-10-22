@@ -48,7 +48,9 @@ def _key(text: str, voice: str) -> str:
 class Polly:
     """Thin wrapper: ``client`` is a boto3 Polly client (or a fake with ``synthesize_speech``)."""
 
-    def __init__(self, cap: SpendCap, *, client: Any = None, cache_dir: str | Path | None = None) -> None:
+    def __init__(
+        self, cap: SpendCap, *, client: Any = None, cache_dir: str | Path | None = None
+    ) -> None:
         self.cap = cap
         self._client = client
         self.cache_dir = Path(cache_dir) if cache_dir else None

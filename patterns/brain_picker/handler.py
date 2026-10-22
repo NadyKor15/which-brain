@@ -67,7 +67,9 @@ class Turn:
     previous: list[str] = field(default_factory=list)
     near_mic: bool | None = None
     frame: Image.Image | None = None
-    has_camera: bool = False  # True when the phrase expects a picture (a missing frame is then a gate miss)
+    has_camera: bool = (
+        False  # True when the phrase expects a picture (a missing frame is then a gate miss)
+    )
     reasks: int = 0
 
 
@@ -121,7 +123,9 @@ class DecisionCache:
 def latest_user_text(messages: list[dict[str, Any]] | None) -> str:
     for message in reversed(messages or []):
         if message.get("role") == "user":
-            texts = [b["text"] for b in message.get("content", []) if isinstance(b, dict) and "text" in b]
+            texts = [
+                b["text"] for b in message.get("content", []) if isinstance(b, dict) and "text" in b
+            ]
             if texts:
                 return " ".join(texts)
     return ""
@@ -184,7 +188,9 @@ class SafetyFirstHandler(InterventionHandler):
         if td.decision.action != "answer" or td.speak is not None:
             return Deny(reason=td.speak or "silent")
         if td.frame_task is not None and turn.frame is not None:
-            return Transform(apply=attach_frame(frames.for_bedrock(turn.frame)), reason="frame attached")
+            return Transform(
+                apply=attach_frame(frames.for_bedrock(turn.frame)), reason="frame attached"
+            )
         return Proceed()
 
     async def before_tool_call(self, event: Any, **kwargs: Any) -> InterventionAction:
@@ -268,8 +274,12 @@ class DeciderRoutingStrategy:
         if context.attempts:
             failed = context.attempts[-1].candidate
             order = [c.name for c in context.candidates]
-            above = [c for c in context.candidates if order.index(c.name) > order.index(failed.name)]
-            return await self._fallback.select(replace(context, candidates=above)) if above else None
+            above = [
+                c for c in context.candidates if order.index(c.name) > order.index(failed.name)
+            ]
+            return (
+                await self._fallback.select(replace(context, candidates=above)) if above else None
+            )
         td = context.invocation_state.get(DECISION_KEY) or self._cache.get(
             context.invocation_state.get("agent")
         )

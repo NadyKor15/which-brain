@@ -10,6 +10,7 @@ AWS Free Tier credits do not cover cross-Region inference.
 
 from __future__ import annotations
 
+import json
 import time
 from collections.abc import AsyncIterable
 from dataclasses import dataclass, field
@@ -28,7 +29,8 @@ MODEL_IDS = {
 BRAIN_MODEL = {"quiet_answer": "micro", "look": "lite", "read_closely": "pro"}
 MAX_TOKENS = 160
 CHARS_PER_TOKEN = 3.0  # worst case for English; real usage is logged per call
-IMAGE_TOKENS = 3000  # worst-case allowance per attached image
+IMAGE_TOKENS = 3000  # worst-case allowance per attached image (1,692 in seen for 850x1100 + prompt)
+TOOL_PREAMBLE = 600  # tokens Bedrock adds around tool use (structured output)
 
 
 @dataclass
@@ -66,8 +68,18 @@ def _images(messages: Any) -> int:
     )
 
 
-def worst_case_usd(model: str, messages: Any, system_prompt: Any, max_tokens: int) -> float:
-    tokens_in = (_text_chars(messages) + _text_chars(system_prompt)) / CHARS_PER_TOKEN + 50
+def worst_case_usd(
+    model: str, messages: Any, system_prompt: Any, max_tokens: int, tool_specs: Any = None
+) -> float:
+    """An upper bound on the call's price: text at 3 chars per token plus 30 %, tool specs as JSON
+    plus the provider's tool preamble, a fixed allowance per image and the full ``max_tokens`` out.
+    """
+    chars = _text_chars(messages) + _text_chars(system_prompt)
+    tokens_in = chars / CHARS_PER_TOKEN * 1.3 + 100
+    if tool_specs:
+        tokens_in += (
+            len(json.dumps(tool_specs, default=str)) / CHARS_PER_TOKEN * 1.3 + TOOL_PREAMBLE
+        )
     tokens_in += _images(messages) * IMAGE_TOKENS
     return nova_usd(model, int(tokens_in) + 1, max_tokens)
 
@@ -75,7 +87,9 @@ def worst_case_usd(model: str, messages: Any, system_prompt: Any, max_tokens: in
 class CappedModel(Model):
     """A Strands model that charges the spend cap before every call."""
 
-    def __init__(self, inner: Model, model: str, cap: SpendCap, max_tokens: int = MAX_TOKENS) -> None:
+    def __init__(
+        self, inner: Model, model: str, cap: SpendCap, max_tokens: int = MAX_TOKENS
+    ) -> None:
         if model not in NOVA:
             raise ValueError(f"unknown price key {model!r}")
         self.inner = inner
@@ -94,15 +108,20 @@ class CappedModel(Model):
     def get_config(self) -> Any:
         return self.inner.get_config()
 
-    def structured_output(self, output_model: Any, prompt: Any, system_prompt: Any = None, **kwargs: Any):
-        usd = worst_case_usd(self.model, prompt, system_prompt, self.max_tokens)
+    def structured_output(
+        self, output_model: Any, prompt: Any, system_prompt: Any = None, **kwargs: Any
+    ):
+        schema = getattr(output_model, "model_json_schema", dict)()
+        usd = worst_case_usd(self.model, prompt, system_prompt, self.max_tokens, [schema])
         self.cap.charge(usd, f"bedrock {self.model} structured")
-        return self.inner.structured_output(output_model, prompt, system_prompt=system_prompt, **kwargs)
+        return self.inner.structured_output(
+            output_model, prompt, system_prompt=system_prompt, **kwargs
+        )
 
     async def stream(
         self, messages: Any, tool_specs: Any = None, system_prompt: Any = None, **kwargs: Any
     ) -> AsyncIterable[Any]:
-        usd = worst_case_usd(self.model, messages, system_prompt, self.max_tokens)
+        usd = worst_case_usd(self.model, messages, system_prompt, self.max_tokens, tool_specs)
         self.cap.charge(usd, f"bedrock {self.model} images={_images(messages)}")
         call = Call(self.model, round(usd, 6), time.perf_counter())
         self.calls.append(call)

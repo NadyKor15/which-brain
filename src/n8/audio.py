@@ -228,8 +228,12 @@ async def transcribe_file(
         audio_s=round(audio_s, 3),
         end_of_speech_s=round(eos, 3),
         speech_dbfs=round(speech_dbfs(samples, RATE), 2),
-        final_after_eos_ms=None if heard.final_after_eos_ms is None else round(heard.final_after_eos_ms, 1),
-        first_partial_ms=None if heard.first_partial_ms is None else round(heard.first_partial_ms, 1),
+        final_after_eos_ms=None
+        if heard.final_after_eos_ms is None
+        else round(heard.final_after_eos_ms, 1),
+        first_partial_ms=None
+        if heard.first_partial_ms is None
+        else round(heard.first_partial_ms, 1),
         segments=heard.segments,
         usd_ceiling=round(usd, 6),
     )

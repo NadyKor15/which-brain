@@ -47,7 +47,9 @@ class TextModel(Model):
         raise NotImplementedError
         yield  # pragma: no cover
 
-    async def stream(self, messages, tool_specs=None, system_prompt=None, **kwargs) -> AsyncIterable:
+    async def stream(
+        self, messages, tool_specs=None, system_prompt=None, **kwargs
+    ) -> AsyncIterable:
         self.seen.append(messages)
         if self.fail:
             raise RuntimeError(f"{self.name} is down")
@@ -83,7 +85,10 @@ def text_server(addressed=0.95, medicine=0.02, brain=None, frame=None, item_medi
             probs = frame or {"clear": 0.95, "partly": 0.04, "unreadable": 0.01}
             top = max(probs, key=probs.get)
             return ok_response(
-                {"frame_check": choice(top, probs, probs[top]), "item_is_medicine": noul(item_medicine)}
+                {
+                    "frame_check": choice(top, probs, probs[top]),
+                    "item_is_medicine": noul(item_medicine),
+                }
             )
         top = max(brain, key=brain.get)
         return ok_response(
@@ -99,7 +104,11 @@ def text_server(addressed=0.95, medicine=0.02, brain=None, frame=None, item_medi
 
 def label_image(sharp: bool = True) -> Image.Image:
     rng = np.random.default_rng(0)
-    arr = rng.integers(0, 255, (300, 400, 3), dtype=np.uint8) if sharp else np.full((300, 400, 3), 128, np.uint8)
+    arr = (
+        rng.integers(0, 255, (300, 400, 3), dtype=np.uint8)
+        if sharp
+        else np.full((300, 400, 3), 128, np.uint8)
+    )
     return Image.fromarray(arr)
 
 
@@ -133,9 +142,14 @@ def test_medicine_refuses_on_p_yes_well_below_half(tmp_path):
     reply, b, _ = play(tmp_path, text_server(medicine=0.31), turn("Is this the one for my heart?"))
     assert reply.action == "refuse" and reply.said == rules.MEDICINE_REFUSE
     assert all(not m.inner.seen for m in b.all())
-    reply, _, _ = play(tmp_path, text_server(medicine=0.29, brain={"quiet_answer": 0.95, "look": 0.02,
-                                                                   "read_closely": 0.02, "ask_human": 0.01}),
-                       turn("How many ounces in a pound?"))
+    reply, _, _ = play(
+        tmp_path,
+        text_server(
+            medicine=0.29,
+            brain={"quiet_answer": 0.95, "look": 0.02, "read_closely": 0.02, "ask_human": 0.01},
+        ),
+        turn("How many ounces in a pound?"),
+    )
     assert reply.action == "answer"
 
 
@@ -146,8 +160,12 @@ def test_ask_human_top_choice_refuses_at_any_confidence(tmp_path):
 
 
 def test_item_medicine_in_the_frame_refuses_after_the_answer_is_discarded(tmp_path):
-    reply, b, _ = play(tmp_path, text_server(item_medicine=0.4), turn(frame=label_image()),
-                       texts={"lite": "This is Acetaminophen 500 mg."})
+    reply, b, _ = play(
+        tmp_path,
+        text_server(item_medicine=0.4),
+        turn(frame=label_image()),
+        texts={"lite": "This is Acetaminophen 500 mg."},
+    )
     assert reply.action == "refuse" and reply.said == rules.MEDICINE_REFUSE
     assert "500" not in reply.said
 
@@ -179,13 +197,21 @@ def test_failed_brain_escalates_up_the_ladder(tmp_path):
 
 def test_top_brain_failing_ends_routing_and_speaks_sorry(tmp_path):
     probs = {k: (0.94 if k == "read_closely" else 0.02) for k in BRAIN}
-    reply, _, _ = play(tmp_path, text_server(brain=probs), turn("Read the second step."), fail=("pro",))
+    reply, _, _ = play(
+        tmp_path, text_server(brain=probs), turn("Read the second step."), fail=("pro",)
+    )
     assert reply.action == "error" and reply.said == bp.SORRY
 
 
 def _context(candidates, state, attempts=()):
-    return RoutingContext(messages=[], system_prompt=None, tool_specs=[], candidates=candidates,
-                          invocation_state=state, attempts=attempts)
+    return RoutingContext(
+        messages=[],
+        system_prompt=None,
+        tool_specs=[],
+        candidates=candidates,
+        invocation_state=state,
+        attempts=attempts,
+    )
 
 
 def test_strategy_returns_the_candidate_instance_by_identity_on_both_paths(tmp_path):
@@ -204,9 +230,14 @@ def test_strategy_returns_the_candidate_instance_by_identity_on_both_paths(tmp_p
     cache.put(agent, bp.TurnDecision(Decision("answer", "quiet_answer")))
     assert asyncio.run(strategy.select(_context(cands, {"agent": agent}))) is cands[0]
     # nothing known: the strongest brain
-    assert asyncio.run(bp.DeciderRoutingStrategy(bp.DecisionCache()).select(_context(cands, {}))) is cands[2]
+    assert (
+        asyncio.run(bp.DeciderRoutingStrategy(bp.DecisionCache()).select(_context(cands, {})))
+        is cands[2]
+    )
     # after lite failed: up, never down
-    up = asyncio.run(strategy.select(_context(cands, {}, (RoutingAttempt(cands[1], RuntimeError()),))))
+    up = asyncio.run(
+        strategy.select(_context(cands, {}, (RoutingAttempt(cands[1], RuntimeError()),)))
+    )
     assert up is cands[2]
 
 
@@ -245,7 +276,11 @@ def test_slow_decider_times_out_into_degraded_mode(tmp_path, monkeypatch):
     b = brains(tmp_path)
     cache = bp.DecisionCache()
     agent = build_agent(b, server.client(), cache)
-    handler = agent._intervention_registry._handlers[0] if hasattr(agent, "_intervention_registry") else None
+    handler = (
+        agent._intervention_registry._handlers[0]
+        if hasattr(agent, "_intervention_registry")
+        else None
+    )
     h = bp.SafetyFirstHandler(Slow(), cache, text_timeout=0.05)
     started = time.perf_counter()
     td = asyncio.run(h.decide_turn(turn("Is it time for my insulin?")))
@@ -279,8 +314,9 @@ def test_image_gate_stops_missing_dark_and_blurred_frames_before_bedrock(tmp_pat
 
 
 def test_look_attaches_the_frame_and_runs_request_two(tmp_path):
-    reply, b, server = play(tmp_path, text_server(), turn(frame=label_image()),
-                            texts={"lite": "Tomato soup."})
+    reply, b, server = play(
+        tmp_path, text_server(), turn(frame=label_image()), texts={"lite": "Tomato soup."}
+    )
     sent = b.lite.inner.seen[0][-1]["content"]
     assert any("image" in block for block in sent)
     assert any("frame_check" in r["questions"] and r.get("images") for r in server.requests)
@@ -289,19 +325,31 @@ def test_look_attaches_the_frame_and_runs_request_two(tmp_path):
 
 def test_partly_hedges_words_but_never_a_number(tmp_path):
     partly = {"clear": 0.3, "partly": 0.6, "unreadable": 0.1}
-    reply, _, _ = play(tmp_path, text_server(frame=partly), turn(frame=label_image()),
-                       texts={"lite": "Red lid, round can."})
+    reply, _, _ = play(
+        tmp_path,
+        text_server(frame=partly),
+        turn(frame=label_image()),
+        texts={"lite": "Red lid, round can."},
+    )
     assert reply.verdict == "hedge" and reply.said.startswith("I think")
-    reply, _, _ = play(tmp_path, text_server(frame=partly), turn(frame=label_image()),
-                       texts={"lite": "Bake 45 minutes at 350 degrees."})
+    reply, _, _ = play(
+        tmp_path,
+        text_server(frame=partly),
+        turn(frame=label_image()),
+        texts={"lite": "Bake 45 minutes at 350 degrees."},
+    )
     assert not rules.hedge_violations(reply.said) and "cut off" in reply.said
 
 
 def test_unreadable_asks_closer_at_most_twice(tmp_path):
     bad = {"clear": 0.05, "partly": 0.15, "unreadable": 0.8}
     for reasks, want in ((0, "reask"), (1, "reask"), (2, "hedge")):
-        reply, _, _ = play(tmp_path, text_server(frame=bad), turn(frame=label_image(), reasks=reasks),
-                           texts={"lite": "Tomato soup."})
+        reply, _, _ = play(
+            tmp_path,
+            text_server(frame=bad),
+            turn(frame=label_image(), reasks=reasks),
+            texts={"lite": "Tomato soup."},
+        )
         assert reply.verdict == want
     assert reply.said.startswith("I think")
 
@@ -365,9 +413,47 @@ def test_capped_model_records_usage_and_first_token(tmp_path):
 
 
 def test_handler_overrides_all_five_lifecycle_methods_at_class_level():
-    for name in ("before_invocation", "before_tool_call", "after_tool_call",
-                 "before_model_call", "after_model_call"):
+    for name in (
+        "before_invocation",
+        "before_tool_call",
+        "after_tool_call",
+        "before_model_call",
+        "after_model_call",
+    ):
         assert name in vars(bp.SafetyFirstHandler)
     h = bp.SafetyFirstHandler(SimpleNamespace(), bp.DecisionCache())
     assert h.on_error == "deny" and h.name == "which-brain-safety-first"
     assert isinstance(Deny(reason="x"), Deny) and Proceed and Transform
+
+
+def test_worst_case_price_covers_the_calls_seen_on_bedrock():
+    """Regression from the 2026-10-22 smoke run: the ceiling must never be below the real price."""
+    from pydantic import BaseModel, Field
+
+    from n8.agent import SYSTEM_PROMPT
+    from n8.brains import worst_case_usd
+    from n8.spend import nova_usd
+
+    class Q12(BaseModel):
+        addressed_to_me: bool = Field(
+            description="Is the latest utterance a request to the assistant?"
+        )
+        about_medicine: bool = Field(description="Would a correct answer require a medicine?")
+
+    msgs = [
+        {"role": "user", "content": [{"text": "Latest utterance: 'How many ounces in a pound?'"}]}
+    ]
+    spec = [{"name": "Q12", "inputSchema": {"json": Q12.model_json_schema()}}]
+    est = worst_case_usd(
+        "micro", msgs, "Answer about the latest utterance spoken in a kitchen.", 160, spec
+    )
+    assert est >= nova_usd("micro", 558, 74)  # seen: 558 in, 74 out
+    img = [
+        {
+            "role": "user",
+            "content": [{"text": "What's in this can?"}, {"image": {"format": "jpeg"}}],
+        }
+    ]
+    assert worst_case_usd("pro", img, SYSTEM_PROMPT, 160) >= nova_usd(
+        "pro", 1692, 8
+    )  # seen: 1692 in

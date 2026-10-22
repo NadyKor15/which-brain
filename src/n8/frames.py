@@ -53,7 +53,9 @@ def sharpness(img: Image.Image) -> float:
     return float(lap.var())
 
 
-def check(img: Image.Image | None, dark_mean: float = DARK_MEAN, blur_var: float = BLUR_VAR) -> FrameCheck:
+def check(
+    img: Image.Image | None, dark_mean: float = DARK_MEAN, blur_var: float = BLUR_VAR
+) -> FrameCheck:
     if img is None:
         return FrameCheck("missing")
     small = resize_for_decider(img)
@@ -77,7 +79,9 @@ def resize_for_decider(img: Image.Image, max_side: int = DECIDER_MAX_SIDE) -> Im
     scale = max_side / max(w, h)
     if scale >= 1:
         return img.copy()
-    return img.resize((max(1, round(w * scale)), max(1, round(h * scale))), Image.Resampling.LANCZOS)
+    return img.resize(
+        (max(1, round(w * scale)), max(1, round(h * scale))), Image.Resampling.LANCZOS
+    )
 
 
 def sharpest(frames: list[Image.Image]) -> int | None:

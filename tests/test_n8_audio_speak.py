@@ -15,7 +15,13 @@ from n8.spend import SpendCap, SpendCapExceeded
 
 def tone_wav(path, amp=0.3, speech_s=1.0, lead_s=0.3, tail_s=0.6, rate=16000):
     t = np.arange(int(rate * speech_s)) / rate
-    x = np.concatenate([np.zeros(int(rate * lead_s)), amp * np.sin(2 * np.pi * 220 * t), np.zeros(int(rate * tail_s))])
+    x = np.concatenate(
+        [
+            np.zeros(int(rate * lead_s)),
+            amp * np.sin(2 * np.pi * 220 * t),
+            np.zeros(int(rate * tail_s)),
+        ]
+    )
     speak.write_wav(path, audio.to_pcm16(x), rate)
     return path
 
@@ -65,7 +71,11 @@ def test_transcribe_over_the_ceiling_sends_nothing(tmp_path):
         raise AssertionError("must not stream")
 
     with pytest.raises(SpendCapExceeded):
-        asyncio.run(audio.transcribe_file("p001", wav, cap=cap, cache=audio.TranscriptCache(tmp_path), stream=fake))
+        asyncio.run(
+            audio.transcribe_file(
+                "p001", wav, cap=cap, cache=audio.TranscriptCache(tmp_path), stream=fake
+            )
+        )
 
 
 class FakeStream:
