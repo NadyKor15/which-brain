@@ -1,0 +1,13 @@
+{
+ "id": "p117",
+ "sha256": "447f7d4db5a9693e45983d04181f5056f6a4bf5c0209867c0800d0cdc0b8cb79",
+ "text": "What does this box say?",
+ "audio_s": 1.978,
+ "end_of_speech_s": 1.86,
+ "speech_dbfs": -20.74,
+ "final_after_eos_ms": 250.9,
+ "first_partial_ms": 629.8,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

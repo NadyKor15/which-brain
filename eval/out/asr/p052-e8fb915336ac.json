@@ -1,0 +1,13 @@
+{
+ "id": "p052",
+ "sha256": "e8fb915336ac00ed6b79bbb8c072edaf003eae6817d833547ae2399459a25259",
+ "text": "Remind me in 5 minutes to stir.",
+ "audio_s": 3.054,
+ "end_of_speech_s": 2.94,
+ "speech_dbfs": -23.79,
+ "final_after_eos_ms": 215.1,
+ "first_partial_ms": 1132.7,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

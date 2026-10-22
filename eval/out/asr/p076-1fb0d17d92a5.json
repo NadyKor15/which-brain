@@ -1,0 +1,13 @@
+{
+ "id": "p076",
+ "sha256": "1fb0d17d92a5850edbbaa20354aeb3b6e7ad5829b4c5bade752c42e453459a6a",
+ "text": "What are the ingredients?",
+ "audio_s": 2.09,
+ "end_of_speech_s": 2.04,
+ "speech_dbfs": -22.97,
+ "final_after_eos_ms": 163.7,
+ "first_partial_ms": 605.0,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

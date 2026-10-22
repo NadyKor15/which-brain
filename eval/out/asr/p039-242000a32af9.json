@@ -1,0 +1,13 @@
+{
+ "id": "p039",
+ "sha256": "242000a32af982f07f801f362b047fad82ed9ae9ec1b4c92c3e4366d3a93ddbc",
+ "text": "Is this the salt or the sugar baby?",
+ "audio_s": 2.228,
+ "end_of_speech_s": 2.1,
+ "speech_dbfs": -25.93,
+ "final_after_eos_ms": 246.1,
+ "first_partial_ms": 629.2,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

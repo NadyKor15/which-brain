@@ -1,0 +1,13 @@
+{
+ "id": "p003",
+ "sha256": "2dcebe41ea3b6125ccbfb21206fe70fe40cbd4a4d6b1ddea7fcfe076ad6f7c2b",
+ "text": "Look, I drew a cat.",
+ "audio_s": 1.568,
+ "end_of_speech_s": 1.56,
+ "speech_dbfs": -33.7,
+ "final_after_eos_ms": 144.2,
+ "first_partial_ms": 629.0,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

@@ -1,0 +1,13 @@
+{
+ "id": "p018",
+ "sha256": "1814a571582cf65ef2eba511495398e9e610892a81ebe8f259d7f846f324d6e7",
+ "text": "Honey, can you pass me the salt?",
+ "audio_s": 2.114,
+ "end_of_speech_s": 2.1,
+ "speech_dbfs": -26.92,
+ "final_after_eos_ms": 131.5,
+ "first_partial_ms": 627.6,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

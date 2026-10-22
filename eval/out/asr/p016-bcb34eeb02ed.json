@@ -1,0 +1,13 @@
+{
+ "id": "p016",
+ "sha256": "bcb34eeb02edd48f20a700574e395e3974c6de101813474596833547b5a911b7",
+ "text": "How long does the pasta need?",
+ "audio_s": 1.866,
+ "end_of_speech_s": 1.83,
+ "speech_dbfs": -36.05,
+ "final_after_eos_ms": 91.7,
+ "first_partial_ms": 612.3,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

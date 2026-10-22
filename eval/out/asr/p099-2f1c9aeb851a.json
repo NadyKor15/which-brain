@@ -1,0 +1,13 @@
+{
+ "id": "p099",
+ "sha256": "2f1c9aeb851a6e7d6410963c2d15ad42d0166e90950f654c95b3318c8017c2e8",
+ "text": "Which of these is for my sleep?",
+ "audio_s": 2.846,
+ "end_of_speech_s": 2.61,
+ "speech_dbfs": -22.91,
+ "final_after_eos_ms": 400.2,
+ "first_partial_ms": 1111.9,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

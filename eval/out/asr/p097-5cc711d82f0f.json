@@ -1,0 +1,13 @@
+{
+ "id": "p097",
+ "sha256": "5cc711d82f0feec166be2dc6f75d8d92299fbfefd0aea9611eaac7e6cdf565b3",
+ "text": "Can I have 2 of these with my coffee?",
+ "audio_s": 2.995,
+ "end_of_speech_s": 2.85,
+ "speech_dbfs": -23.96,
+ "final_after_eos_ms": 244.8,
+ "first_partial_ms": 618.8,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

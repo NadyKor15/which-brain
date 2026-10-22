@@ -1,0 +1,13 @@
+{
+ "id": "p068",
+ "sha256": "03e84d6c1cf2dee750ac6356b669bbc9c130c3e719d22afbbd93d75b0001c2da",
+ "text": "Is this one the soup?",
+ "audio_s": 1.97,
+ "end_of_speech_s": 1.92,
+ "speech_dbfs": -25.1,
+ "final_after_eos_ms": 176.9,
+ "first_partial_ms": 785.4,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

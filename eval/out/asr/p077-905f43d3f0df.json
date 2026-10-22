@@ -1,0 +1,13 @@
+{
+ "id": "p077",
+ "sha256": "905f43d3f0dfdef0810089572663ebe503f0f27ee80f7626584ed791bda31de5",
+ "text": "Read me the best before date.",
+ "audio_s": 2.499,
+ "end_of_speech_s": 2.37,
+ "speech_dbfs": -21.73,
+ "final_after_eos_ms": 144.1,
+ "first_partial_ms": 692.1,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

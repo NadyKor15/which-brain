@@ -1,0 +1,13 @@
+{
+ "id": "p073",
+ "sha256": "a86f218c25f82342257ed27b4234a5dd82de331caf2b9b4e9c1834df506e29c8",
+ "text": "Read me the cooking instructions.",
+ "audio_s": 2.327,
+ "end_of_speech_s": 2.28,
+ "speech_dbfs": -23.7,
+ "final_after_eos_ms": 237.5,
+ "first_partial_ms": 713.6,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

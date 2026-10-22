@@ -1,0 +1,13 @@
+{
+ "id": "p070",
+ "sha256": "d3c921459b0729a2402e8c26b77e5374b115cf37b1b90839a25457a6a783d8e6",
+ "text": "What kind of oats is this?",
+ "audio_s": 2.812,
+ "end_of_speech_s": 2.67,
+ "speech_dbfs": -22.68,
+ "final_after_eos_ms": 314.2,
+ "first_partial_ms": 709.4,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

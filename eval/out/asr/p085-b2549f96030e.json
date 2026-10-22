@@ -1,0 +1,13 @@
+{
+ "id": "p085",
+ "sha256": "b2549f96030ec94b23cad64bcf2a57ce6d8f913e481b817f2d65508e596a80aa",
+ "text": "Is this vitamin D or the iron?",
+ "audio_s": 3.406,
+ "end_of_speech_s": 3.27,
+ "speech_dbfs": -22.24,
+ "final_after_eos_ms": 337.6,
+ "first_partial_ms": 625.9,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

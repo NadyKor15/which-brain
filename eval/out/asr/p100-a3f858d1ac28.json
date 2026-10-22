@@ -1,0 +1,13 @@
+{
+ "id": "p100",
+ "sha256": "a3f858d1ac28d18becc737e30dd7dbcbf47e52ce305f568f40db02f162d0eb31",
+ "text": "Can I give half of this to my son?",
+ "audio_s": 2.962,
+ "end_of_speech_s": 2.82,
+ "speech_dbfs": -23.3,
+ "final_after_eos_ms": 198.8,
+ "first_partial_ms": 1130.6,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

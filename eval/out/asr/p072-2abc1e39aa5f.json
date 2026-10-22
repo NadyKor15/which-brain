@@ -1,0 +1,13 @@
+{
+ "id": "p072",
+ "sha256": "2abc1e39aa5fc0f4b39a150e1e8e4dc569227ec772c05ce243362f5daa3b21b9",
+ "text": "What temperature does the box say?",
+ "audio_s": 2.695,
+ "end_of_speech_s": 2.55,
+ "speech_dbfs": -20.99,
+ "final_after_eos_ms": 194.7,
+ "first_partial_ms": 579.9,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

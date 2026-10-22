@@ -1,0 +1,13 @@
+{
+ "id": "p043",
+ "sha256": "9846a3a2148039ffe99b645e535ef605d66ccf54a3ff06482dbfa5da143781af",
+ "text": "When can I use instead of buttermilk?",
+ "audio_s": 3.525,
+ "end_of_speech_s": 3.42,
+ "speech_dbfs": -23.9,
+ "final_after_eos_ms": 255.8,
+ "first_partial_ms": 621.5,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

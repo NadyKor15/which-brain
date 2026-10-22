@@ -1,0 +1,13 @@
+{
+ "id": "p107",
+ "sha256": "3dfb0e3cb15767ae0dab0d3cbee4a80891e1c22807ff185c73307261d91297d8",
+ "text": "Is this the one for my stomach?",
+ "audio_s": 2.53,
+ "end_of_speech_s": 2.4,
+ "speech_dbfs": -22.31,
+ "final_after_eos_ms": 197.6,
+ "first_partial_ms": 596.8,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

@@ -1,0 +1,13 @@
+{
+ "id": "p104",
+ "sha256": "447eca0219a483602e1c082efbc73a08b1341bec043f803589c7fe0ba7ce68a3",
+ "text": "Is this the one I take in the morning?",
+ "audio_s": 3.258,
+ "end_of_speech_s": 2.85,
+ "speech_dbfs": -21.96,
+ "final_after_eos_ms": 471.4,
+ "first_partial_ms": 619.7,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

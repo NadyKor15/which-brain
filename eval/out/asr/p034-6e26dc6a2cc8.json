@@ -1,0 +1,13 @@
+{
+ "id": "p034",
+ "sha256": "6e26dc6a2cc8ae823b3daccec0c3b6b0e058f2f78e377520bb626445011a5a52",
+ "text": "Helper, which one is the sugar?",
+ "audio_s": 2.596,
+ "end_of_speech_s": 2.49,
+ "speech_dbfs": -25.25,
+ "final_after_eos_ms": 165.7,
+ "first_partial_ms": 605.9,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

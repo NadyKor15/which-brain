@@ -1,0 +1,13 @@
+{
+ "id": "p028",
+ "sha256": "b56cd3e6031064a53c773f99ec410041442c902113bc921a61f07116f6398e29",
+ "text": "Helper, set a timer for 10 minutes.",
+ "audio_s": 2.971,
+ "end_of_speech_s": 2.85,
+ "speech_dbfs": -23.71,
+ "final_after_eos_ms": 269.7,
+ "first_partial_ms": 607.2,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

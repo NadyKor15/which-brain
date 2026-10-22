@@ -1,0 +1,13 @@
+{
+ "id": "p079",
+ "sha256": "d949706318a23d5feab65099cbe1c5d35e7bac2f189e65418df9bdaf9f4a6c46",
+ "text": "What's the microwave time?",
+ "audio_s": 2.359,
+ "end_of_speech_s": 2.22,
+ "speech_dbfs": -21.21,
+ "final_after_eos_ms": 213.8,
+ "first_partial_ms": 747.7,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

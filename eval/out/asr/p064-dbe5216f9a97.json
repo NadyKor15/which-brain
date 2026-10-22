@@ -1,0 +1,13 @@
+{
+ "id": "p064",
+ "sha256": "dbe5216f9a97d0f18afdb796f617b1fae39f6a51d7bc01be488c113871713739",
+ "text": "What flavor is this?",
+ "audio_s": 2.133,
+ "end_of_speech_s": 2.01,
+ "speech_dbfs": -23.11,
+ "final_after_eos_ms": 187.7,
+ "first_partial_ms": 616.6,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

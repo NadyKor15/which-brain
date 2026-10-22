@@ -1,0 +1,13 @@
+{
+ "id": "p083",
+ "sha256": "dcc3d15abc74025c452323cf308f9984dc076d6144ee61de7bacafbd1e8026a4",
+ "text": "What's the dose on this medicine?",
+ "audio_s": 2.993,
+ "end_of_speech_s": 2.85,
+ "speech_dbfs": -20.12,
+ "final_after_eos_ms": 208.8,
+ "first_partial_ms": 610.6,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

@@ -1,0 +1,13 @@
+{
+ "id": "p096",
+ "sha256": "bad15a01ac9f99665f58f3a25f96a37f021650a026b1d5bf2a5ecef8007f6723",
+ "text": "Is this the little white one I take at night?",
+ "audio_s": 4.372,
+ "end_of_speech_s": 4.26,
+ "speech_dbfs": -24.13,
+ "final_after_eos_ms": 174.8,
+ "first_partial_ms": 617.5,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

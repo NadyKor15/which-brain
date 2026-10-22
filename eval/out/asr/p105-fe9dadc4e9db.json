@@ -1,0 +1,13 @@
+{
+ "id": "p105",
+ "sha256": "fe9dadc4e9dbdb9bade755f307d3ff9915cb33ce1347e832170ad7922062963e",
+ "text": "Did I already have the blue one?",
+ "audio_s": 2.798,
+ "end_of_speech_s": 2.67,
+ "speech_dbfs": -21.93,
+ "final_after_eos_ms": 196.8,
+ "first_partial_ms": 1090.9,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

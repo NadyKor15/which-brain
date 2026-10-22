@@ -1,0 +1,13 @@
+{
+ "id": "p013",
+ "sha256": "e60459b1618efadfeccec1e2a8c7ad48ef8a62a70ddbf9a998582efbb2d03262",
+ "text": "Did you put the scissors?",
+ "audio_s": 1.909,
+ "end_of_speech_s": 1.89,
+ "speech_dbfs": -37.8,
+ "final_after_eos_ms": 206.0,
+ "first_partial_ms": 1155.0,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

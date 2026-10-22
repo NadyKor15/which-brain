@@ -1,0 +1,13 @@
+{
+ "id": "p080",
+ "sha256": "9f50b502d9b508424c77d43e8690dd22fdf7f4d9a74e88bf0a88958a253eea67",
+ "text": "Read the 2nd step.",
+ "audio_s": 1.774,
+ "end_of_speech_s": 1.65,
+ "speech_dbfs": -22.23,
+ "final_after_eos_ms": 202.5,
+ "first_partial_ms": 633.0,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

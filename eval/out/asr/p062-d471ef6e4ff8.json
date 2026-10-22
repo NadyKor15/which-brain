@@ -1,0 +1,13 @@
+{
+ "id": "p062",
+ "sha256": "d471ef6e4ff844035a1e85252f6c254911a5a9d609372bf72240f60b0f2d06a8",
+ "text": "What's this bag?",
+ "audio_s": 1.47,
+ "end_of_speech_s": 1.32,
+ "speech_dbfs": -25.94,
+ "final_after_eos_ms": 242.0,
+ "first_partial_ms": 636.0,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

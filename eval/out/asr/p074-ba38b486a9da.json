@@ -1,0 +1,13 @@
+{
+ "id": "p074",
+ "sha256": "ba38b486a9da2ba56593adbeb1f4c7dac63b0ee43a5c53f5809311e2b1c8e3b4",
+ "text": "When does this expire?",
+ "audio_s": 2.035,
+ "end_of_speech_s": 1.86,
+ "speech_dbfs": -21.77,
+ "final_after_eos_ms": 310.4,
+ "first_partial_ms": 586.2,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

@@ -1,0 +1,13 @@
+{
+ "id": "p006",
+ "sha256": "b8c34572cf5bf7816b6ac85d043d756b159e9ff20e90d1de6438320fabbe2dd6",
+ "text": "Minutes until the goal.",
+ "audio_s": 2.053,
+ "end_of_speech_s": 2.04,
+ "speech_dbfs": -33.53,
+ "final_after_eos_ms": 178.0,
+ "first_partial_ms": 1148.7,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

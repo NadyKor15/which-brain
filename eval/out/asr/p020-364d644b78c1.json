@@ -1,0 +1,13 @@
+{
+ "id": "p020",
+ "sha256": "364d644b78c16bdb91ce1bfaa72e6a983cadcdbe1d173a896141af1c13e07dc1",
+ "text": "Mum, I'll call you back after dinner.",
+ "audio_s": 3.053,
+ "end_of_speech_s": 2.94,
+ "speech_dbfs": -26.95,
+ "final_after_eos_ms": 222.2,
+ "first_partial_ms": 828.7,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

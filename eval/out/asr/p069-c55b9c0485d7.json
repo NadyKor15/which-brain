@@ -1,0 +1,13 @@
+{
+ "id": "p069",
+ "sha256": "c55b9c0485d7a378cc4a80fd5a6febe38ceff0b541882411125b64912bf0db73",
+ "text": "What does the front say?",
+ "audio_s": 2.138,
+ "end_of_speech_s": 2.01,
+ "speech_dbfs": -23.15,
+ "final_after_eos_ms": 201.5,
+ "first_partial_ms": 635.8,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

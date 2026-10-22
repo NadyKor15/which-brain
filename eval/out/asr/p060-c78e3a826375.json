@@ -1,0 +1,13 @@
+{
+ "id": "p060",
+ "sha256": "c78e3a826375b7c842445927e7467c0a692fa3f7bb92fa3697869ba4ba2d809f",
+ "text": "Is this the pasta or the rice?",
+ "audio_s": 2.618,
+ "end_of_speech_s": 2.49,
+ "speech_dbfs": -26.99,
+ "final_after_eos_ms": 224.3,
+ "first_partial_ms": 630.5,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

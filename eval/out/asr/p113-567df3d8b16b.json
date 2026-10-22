@@ -1,0 +1,13 @@
+{
+ "id": "p113",
+ "sha256": "567df3d8b16baf62703347d9c946180860cf5023fa45abe3f900e3c12efccbc0",
+ "text": "One dose of vanilla. How many teaspoons is that?",
+ "audio_s": 4.463,
+ "end_of_speech_s": 4.2,
+ "speech_dbfs": -19.06,
+ "final_after_eos_ms": 371.0,
+ "first_partial_ms": 622.9,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

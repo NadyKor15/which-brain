@@ -1,0 +1,13 @@
+{
+ "id": "p048",
+ "sha256": "de72f1abeafc857ab24ac1f06f3f6f2e2dd64de2b82350e4388ea64fac2f758a",
+ "text": "How much is one stick of butter in grams?",
+ "audio_s": 3.817,
+ "end_of_speech_s": 3.69,
+ "speech_dbfs": -25.02,
+ "final_after_eos_ms": 347.4,
+ "first_partial_ms": 632.4,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

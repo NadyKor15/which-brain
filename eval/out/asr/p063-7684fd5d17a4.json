@@ -1,0 +1,13 @@
+{
+ "id": "p063",
+ "sha256": "7684fd5d17a4aff7b96491b341e460037b2286465d6d555f3e0f939062c8cf6b",
+ "text": "Is this sugar or salt?",
+ "audio_s": 2.353,
+ "end_of_speech_s": 2.22,
+ "speech_dbfs": -25.07,
+ "final_after_eos_ms": 243.2,
+ "first_partial_ms": 630.6,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

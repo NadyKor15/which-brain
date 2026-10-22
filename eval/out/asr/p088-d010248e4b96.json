@@ -1,0 +1,13 @@
+{
+ "id": "p088",
+ "sha256": "d010248e4b96d957667b5dc4d517ce3042ea5ed88a6b5f802aa3b96a231554c8",
+ "text": "Did I already take my medicine today?",
+ "audio_s": 3.113,
+ "end_of_speech_s": 3.0,
+ "speech_dbfs": -22.62,
+ "final_after_eos_ms": 347.2,
+ "first_partial_ms": 1096.2,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

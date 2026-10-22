@@ -1,0 +1,13 @@
+{
+ "id": "p032",
+ "sha256": "aba634b0b99db5214c892c52e1d0527bc909defaa2a90400299729f99e188880",
+ "text": "Helper, how much is a cab in Grams?",
+ "audio_s": 3.3,
+ "end_of_speech_s": 3.15,
+ "speech_dbfs": -23.56,
+ "final_after_eos_ms": 243.3,
+ "first_partial_ms": 773.7,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

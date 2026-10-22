@@ -1,0 +1,13 @@
+{
+ "id": "p071",
+ "sha256": "3cba338f71716473d289018f4473ec1f76e040cd4791a22beb9887c86a64ade0",
+ "text": "How many minutes do I bake this?",
+ "audio_s": 2.612,
+ "end_of_speech_s": 2.49,
+ "speech_dbfs": -23.18,
+ "final_after_eos_ms": 271.5,
+ "first_partial_ms": 610.9,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

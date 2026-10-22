@@ -1,0 +1,13 @@
+{
+ "id": "p056",
+ "sha256": "5e00f1009340ad5ca128720a21eeed4edba61165ab4bcfc7469db582d5c74ca1",
+ "text": "What's in this can?",
+ "audio_s": 1.59,
+ "end_of_speech_s": 1.5,
+ "speech_dbfs": -25.65,
+ "final_after_eos_ms": 157.9,
+ "first_partial_ms": 593.3,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

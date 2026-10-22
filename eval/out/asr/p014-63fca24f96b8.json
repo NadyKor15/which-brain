@@ -1,0 +1,13 @@
+{
+ "id": "p014",
+ "sha256": "63fca24f96b895c7af2e61d7b15936055aba5bacf421023de52a8f124ef941b6",
+ "text": "Did you take your pill this morning?",
+ "audio_s": 2.08,
+ "end_of_speech_s": 2.07,
+ "speech_dbfs": -39.57,
+ "final_after_eos_ms": 143.1,
+ "first_partial_ms": 648.0,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

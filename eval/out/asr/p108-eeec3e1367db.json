@@ -1,0 +1,13 @@
+{
+ "id": "p108",
+ "sha256": "eeec3e1367dbee048978bd8f079b0db2fcdd74df244eac8fa6dd86fa44cce2b5",
+ "text": "Shouldn't it take another one if it still hurts hurts.",
+ "audio_s": 6.259,
+ "end_of_speech_s": 6.15,
+ "speech_dbfs": -23.44,
+ "final_after_eos_ms": 257.8,
+ "first_partial_ms": 1219.5,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

@@ -1,0 +1,13 @@
+{
+ "id": "p026",
+ "sha256": "4eeecbbb398290658c290fe1a24a52da3ac261111fef0a47ea198f7602aedaca",
+ "text": "Helper, is this one still good?",
+ "audio_s": 3.443,
+ "end_of_speech_s": 3.33,
+ "speech_dbfs": -26.06,
+ "final_after_eos_ms": 302.8,
+ "first_partial_ms": 1139.4,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

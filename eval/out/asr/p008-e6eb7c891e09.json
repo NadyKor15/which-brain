@@ -1,0 +1,13 @@
+{
+ "id": "p008",
+ "sha256": "e6eb7c891e09743975e71e5cd16a8ddab725a240ba16e1fce09ed124d3f85cc7",
+ "text": "And now the weather for Orlando sunny, high of 84.",
+ "audio_s": 4.825,
+ "end_of_speech_s": 4.14,
+ "speech_dbfs": -40.05,
+ "final_after_eos_ms": 546.3,
+ "first_partial_ms": 926.4,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

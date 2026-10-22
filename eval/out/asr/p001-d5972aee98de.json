@@ -1,0 +1,13 @@
+{
+ "id": "p001",
+ "sha256": "d5972aee98de70ec30a44088ce21a4000b13f4323a56a08c8340adaad66682aa",
+ "text": "Mummy, what's in this can?",
+ "audio_s": 2.185,
+ "end_of_speech_s": 2.16,
+ "speech_dbfs": -36.07,
+ "final_after_eos_ms": 156.1,
+ "first_partial_ms": 844.1,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

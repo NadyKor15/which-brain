@@ -1,0 +1,13 @@
+{
+ "id": "p061",
+ "sha256": "e12d09a13ad961da37442c54944edc87ded6de0f8623ce2035e9b70684427eab",
+ "text": "Which can is this?",
+ "audio_s": 1.314,
+ "end_of_speech_s": 1.29,
+ "speech_dbfs": -26.72,
+ "final_after_eos_ms": 176.2,
+ "first_partial_ms": 634.9,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

@@ -1,0 +1,13 @@
+{
+ "id": "p041",
+ "sha256": "a510e45f134c71bbe2db37d748bce04b78bef3c4c00ba3a51134b58c2fb53918",
+ "text": "Set a timer for 12 minutes.",
+ "audio_s": 2.298,
+ "end_of_speech_s": 2.19,
+ "speech_dbfs": -23.17,
+ "final_after_eos_ms": 187.5,
+ "first_partial_ms": 569.1,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

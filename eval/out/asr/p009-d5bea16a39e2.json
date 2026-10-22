@@ -1,0 +1,13 @@
+{
+ "id": "p009",
+ "sha256": "d5bea16a39e2dcc81b99f5806a2fd67580203bc0e7277cf3799ad7f76d1a226d",
+ "text": "Preheat your oven to 350 degrees and grease the pan.",
+ "audio_s": 3.975,
+ "end_of_speech_s": 3.27,
+ "speech_dbfs": -40.4,
+ "final_after_eos_ms": 547.0,
+ "first_partial_ms": 1005.3,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

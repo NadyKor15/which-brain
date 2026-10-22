@@ -1,0 +1,13 @@
+{
+ "id": "p004",
+ "sha256": "642bae4235a4276dcb5469e57fad3779569b7af477f1055d99ad29abbb767417",
+ "text": "Is dinner ready yet?",
+ "audio_s": 1.471,
+ "end_of_speech_s": 1.47,
+ "speech_dbfs": -35.92,
+ "final_after_eos_ms": 81.0,
+ "first_partial_ms": 629.3,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

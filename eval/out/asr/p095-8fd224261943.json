@@ -1,0 +1,13 @@
+{
+ "id": "p095",
+ "sha256": "8fd224261943440fc470238a8292b4f64ad5c7566c8529d741551913dfc3ad69",
+ "text": "What's the max dose of ibuprofen?",
+ "audio_s": 3.309,
+ "end_of_speech_s": 3.18,
+ "speech_dbfs": -22.91,
+ "final_after_eos_ms": 326.1,
+ "first_partial_ms": 619.1,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

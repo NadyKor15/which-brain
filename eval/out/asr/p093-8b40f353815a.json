@@ -1,0 +1,13 @@
+{
+ "id": "p093",
+ "sha256": "8b40f353815ab95dd9835bd0f9ca0d58894974decb6cb2a703ceeaa770ecdebf",
+ "text": "Can kids take this medicine?",
+ "audio_s": 2.983,
+ "end_of_speech_s": 2.85,
+ "speech_dbfs": -21.39,
+ "final_after_eos_ms": 277.1,
+ "first_partial_ms": 1631.8,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

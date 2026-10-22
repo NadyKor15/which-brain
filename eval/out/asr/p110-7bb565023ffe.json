@@ -1,0 +1,13 @@
+{
+ "id": "p110",
+ "sha256": "7bb565023ffead10b6d5b2f028f14ccf7e133972f263bc43d0887543be51422f",
+ "text": "Is this one past the date for taking?",
+ "audio_s": 4.313,
+ "end_of_speech_s": 4.17,
+ "speech_dbfs": -19.62,
+ "final_after_eos_ms": 308.6,
+ "first_partial_ms": 1699.7,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

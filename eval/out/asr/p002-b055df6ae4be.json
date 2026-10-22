@@ -1,0 +1,13 @@
+{
+ "id": "p002",
+ "sha256": "b055df6ae4be22cf6d1e0d369ab7d9b5762dc791afefbf4d8cccb3253302e457",
+ "text": "Can I have a cookie now.",
+ "audio_s": 1.475,
+ "end_of_speech_s": 1.47,
+ "speech_dbfs": -36.96,
+ "final_after_eos_ms": 81.9,
+ "first_partial_ms": 620.1,
+ "segments": 2,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

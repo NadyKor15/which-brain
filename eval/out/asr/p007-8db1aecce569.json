@@ -1,0 +1,13 @@
+{
+ "id": "p007",
+ "sha256": "8db1aecce569bef9c29d9f4ac0e57e68c735d29c460b805dd2009d193dbbbc87",
+ "text": "Can you read me this box?",
+ "audio_s": 1.708,
+ "end_of_speech_s": 1.68,
+ "speech_dbfs": -34.84,
+ "final_after_eos_ms": 142.2,
+ "first_partial_ms": 708.4,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

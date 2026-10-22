@@ -1,0 +1,13 @@
+{
+ "id": "p021",
+ "sha256": "32e8be5af403e44bde6d65c6d787ba9caa44f5b60b0a22ad2efd5bfb1188e7ed",
+ "text": "Honey, what's in this can?",
+ "audio_s": 1.805,
+ "end_of_speech_s": 1.71,
+ "speech_dbfs": -26.28,
+ "final_after_eos_ms": 276.5,
+ "first_partial_ms": 603.5,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}

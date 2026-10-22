@@ -1,0 +1,13 @@
+{
+ "id": "p051",
+ "sha256": "4c174f34f196aa613106daf67923739242b8ce2ae73c48e1612d8ff4d7756a41",
+ "text": "How many ounces in a pound?",
+ "audio_s": 2.734,
+ "end_of_speech_s": 2.7,
+ "speech_dbfs": -24.64,
+ "final_after_eos_ms": 168.4,
+ "first_partial_ms": 585.4,
+ "segments": 1,
+ "usd_ceiling": 0.006,
+ "language": "en-US"
+}
