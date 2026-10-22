@@ -391,7 +391,10 @@ def sweep(
 ) -> dict[str, float]:
     """Thresholds with the lowest error cost on the given (tuning) rows.
 
-    Ties go to the lower medicine threshold (safer), then to the values closest to the start.
+    Ties go to the lower medicine threshold (safer), then to the values closest to the start
+    (0.85 / 0.15 / brain 0.90). ``brain_sure`` matters for safety too: below it the stronger of the
+    top two brains is taken, and ``ask_human`` is the top of that ladder, so it also sets how often
+    a second-place ``ask_human`` refuses.
     """
     candidates = []
     for y in (0.5, 0.6, 0.7, 0.8, 0.85, 0.9, 0.95):
@@ -399,10 +402,17 @@ def sweep(
             if n > y:
                 continue
             for m in (0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5):
-                thr = {"addressed_yes": y, "addressed_no": n, "medicine_tau": m}
-                dec, follow = router_decisions(raw, thr, far_is_silent)
-                cost = score_rows(table, dec, gates, followups=follow)["cost"]
-                candidates.append(((cost, m, round(abs(y - 0.85) + abs(n - 0.15), 3)), thr))
+                for bs in (0.0, 0.5, 0.6, 0.7, 0.8, 0.9):
+                    thr = {
+                        "addressed_yes": y,
+                        "addressed_no": n,
+                        "medicine_tau": m,
+                        "brain_sure": bs,
+                    }
+                    dec, follow = router_decisions(raw, thr, far_is_silent)
+                    cost = score_rows(table, dec, gates, followups=follow)["cost"]
+                    near = round(abs(y - 0.85) + abs(n - 0.15) + abs(bs - 0.9), 3)
+                    candidates.append(((cost, m, near), thr))
     return min(candidates, key=lambda c: c[0])[1]
 
 
