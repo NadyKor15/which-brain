@@ -1,8 +1,9 @@
 """Decider Request 2 on the photographed frames ($0): code gate first, then frame_check + item_is_medicine.
 
     python eval/run_frames.py eval/frames/raw    # files in shot-list order (SHOTLIST.md)
+    python eval/run_frames.py eval/frames/incoming eval/frames/manifest-2026-10-22.csv   # labelled by a manifest
 """
-import base64, io, json, os, sys, time
+import base64, csv, io, json, os, sys, time
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -20,14 +21,20 @@ def b64(img):
     return base64.b64encode(buf.getvalue()).decode()
 
 
-def main(folder):
-    files = sorted(p for p in Path(folder).iterdir() if p.suffix.lower() in (".jpg", ".jpeg", ".png", ".heic"))
-    if len(files) != len(SLOTS):
-        print(f"warning: {len(files)} files, shot list has {len(SLOTS)}; pairing in order")
+def main(folder, manifest=None):
+    if manifest:
+        rows = list(csv.DictReader(open(manifest)))
+        files = [Path(folder) / r["file"] for r in rows]
+        slots = [(r["label"], r["gold_frame"]) for r in rows]
+    else:
+        files = sorted(p for p in Path(folder).iterdir() if p.suffix.lower() in (".jpg", ".jpeg", ".png", ".heic"))
+        slots = SLOTS
+        if len(files) != len(SLOTS):
+            print(f"warning: {len(files)} files, shot list has {len(SLOTS)}; pairing in order")
     qs = load_questions(ROOT / "patterns/brain_picker/frame_questions.yaml")
     rows = []
     with DeciderClient(os.environ.get("STRANDS_DECIDER_URL", "http://127.0.0.1:18199"), timeout=20) as c:
-        for f, (label, level) in zip(files, SLOTS):
+        for f, (label, level) in zip(files, slots):
             img = frames.load(f)
             g = frames.check(img)
             row = {"file": f.name, "label": label, "gold_frame": level, "gold_medicine": label in MEDICINE,
@@ -44,4 +51,4 @@ def main(folder):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(*sys.argv[1:3])
