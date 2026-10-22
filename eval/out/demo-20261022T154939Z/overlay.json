@@ -1,0 +1,255 @@
+[
+ {
+  "id": "p056",
+  "script": "What's in this can?",
+  "heard": "What's in this can?",
+  "audio": "eval/audio/video-2026-10-22/p056.wav",
+  "speaker_role": "cook",
+  "near_mic": true,
+  "decider": {
+   "addressed": 0.75,
+   "medicine": 0.0747,
+   "brain": {
+    "quiet_answer": 0.0449,
+    "look": 0.7951,
+    "read_closely": 0.0241,
+    "ask_human": 0.1358
+   },
+   "brain_top": "look",
+   "brain_conf": 0.7269
+  },
+  "frame": {
+   "frame": {
+    "clear": 0.6295,
+    "partly": 0.3261,
+    "unreadable": 0.0443
+   },
+   "item_medicine": 0.0353
+  },
+  "action": "answer",
+  "brain_badge": "look",
+  "model": "lite",
+  "verdict": "hedge",
+  "earcon": "looking",
+  "model_answer": "Tomato soup, condensed.",
+  "said": "I think tomato soup, condensed.",
+  "timing_ms": {
+   "transcribe_final_after_speech": 228.7,
+   "agent_ms": 2482.7,
+   "text_decider_ms": 1139.1227080021054,
+   "text_decider_server_ms": 1082.19,
+   "decided_ms": 1139.3,
+   "frame_decider_ms": 514.9625830235891,
+   "frame_decider_server_ms": 505.97,
+   "first_token_ms": 2257.8,
+   "ready_ms": 2482.7,
+   "polly_first_byte": 231.6
+  },
+  "usd": 0.000139,
+  "measured_at": "2026-10-22T15:49:44Z"
+ },
+ {
+  "id": "p002",
+  "script": "Can I have a cookie now?",
+  "heard": "Can I have a cookie now?",
+  "audio": "eval/audio/video-2026-10-22/p002.wav",
+  "speaker_role": "child (or adult reading)",
+  "near_mic": false,
+  "decider": {},
+  "frame": {},
+  "action": "silent",
+  "brain_badge": null,
+  "model": null,
+  "verdict": null,
+  "earcon": null,
+  "model_answer": null,
+  "said": null,
+  "timing_ms": {
+   "transcribe_final_after_speech": -198.0,
+   "agent_ms": 0.1,
+   "text_decider_ms": null,
+   "text_decider_server_ms": null,
+   "decided_ms": 0.1,
+   "ready_ms": 0.1,
+   "polly_first_byte": null
+  },
+  "usd": 0,
+  "measured_at": "2026-10-22T15:49:44Z"
+ },
+ {
+  "id": "p062",
+  "script": "What's this bag?",
+  "heard": "What's this bag?",
+  "audio": "eval/audio/video-2026-10-22/p062.wav",
+  "speaker_role": "cook",
+  "near_mic": true,
+  "decider": {
+   "addressed": 0.6433,
+   "medicine": 0.0595,
+   "brain": {
+    "quiet_answer": 0.0431,
+    "look": 0.82,
+    "read_closely": 0.0108,
+    "ask_human": 0.1261
+   },
+   "brain_top": "look",
+   "brain_conf": 0.76
+  },
+  "frame": {
+   "frame": {
+    "clear": 0.9381,
+    "partly": 0.045,
+    "unreadable": 0.0169
+   },
+   "item_medicine": 0.0316
+  },
+  "action": "answer",
+  "brain_badge": "look",
+  "model": "lite",
+  "verdict": "plain",
+  "earcon": "looking",
+  "model_answer": "White Rice Extra Long Grain",
+  "said": "White Rice Extra Long Grain",
+  "timing_ms": {
+   "transcribe_final_after_speech": 307.5,
+   "agent_ms": 1298.5,
+   "text_decider_ms": 414.1849579755217,
+   "text_decider_server_ms": 407.71,
+   "decided_ms": 414.3,
+   "frame_decider_ms": 519.8688749806024,
+   "frame_decider_server_ms": 511.39,
+   "first_token_ms": 1264.6,
+   "ready_ms": 1298.6,
+   "polly_first_byte": 65.6
+  },
+  "usd": 0.0001389,
+  "measured_at": "2026-10-22T15:49:47Z"
+ },
+ {
+  "id": "p077",
+  "script": "Read me the best before date.",
+  "heard": "Read me the best before date.",
+  "audio": "eval/audio/video-2026-10-22/p077.wav",
+  "speaker_role": "cook",
+  "near_mic": true,
+  "decider": {
+   "addressed": 0.6287,
+   "medicine": 0.0903,
+   "brain": {
+    "quiet_answer": 0.1094,
+    "look": 0.0684,
+    "read_closely": 0.758,
+    "ask_human": 0.0642
+   },
+   "brain_top": "read_closely",
+   "brain_conf": 0.6773
+  },
+  "frame": {
+   "frame": {
+    "clear": 0.4409,
+    "partly": 0.4612,
+    "unreadable": 0.0979
+   },
+   "item_medicine": 0.2589
+  },
+  "action": "answer",
+  "brain_badge": "read_closely",
+  "model": "pro",
+  "verdict": "hedge",
+  "earcon": "reading",
+  "model_answer": "The best before date is March 5, 2028.",
+  "said": "I can't read it yet. Hold it a bit closer.",
+  "timing_ms": {
+   "transcribe_final_after_speech": 241.8,
+   "agent_ms": 2054.5,
+   "text_decider_ms": 461.1736669903621,
+   "text_decider_server_ms": 422.54,
+   "decided_ms": 461.3,
+   "frame_decider_ms": 494.2492919508368,
+   "frame_decider_server_ms": 473.59,
+   "first_token_ms": 1942.4,
+   "ready_ms": 2054.6,
+   "polly_first_byte": 65.5
+  },
+  "usd": 0.0018848,
+  "measured_at": "2026-10-22T15:49:52Z"
+ },
+ {
+  "id": "p081",
+  "script": "Is this my blood pressure pill?",
+  "heard": "Is this my blood pressure pill?",
+  "audio": "eval/audio/video-2026-10-22/p081.wav",
+  "speaker_role": "cook",
+  "near_mic": true,
+  "decider": {
+   "addressed": 0.6227,
+   "medicine": 0.7786,
+   "brain": {
+    "quiet_answer": 0.0681,
+    "look": 0.2544,
+    "read_closely": 0.0162,
+    "ask_human": 0.6613
+   },
+   "brain_top": "ask_human",
+   "brain_conf": 0.5484
+  },
+  "frame": {},
+  "action": "refuse",
+  "brain_badge": null,
+  "model": null,
+  "verdict": null,
+  "earcon": "heard",
+  "model_answer": null,
+  "said": "I won't guess on medicine. Want me to call your helper?",
+  "timing_ms": {
+   "transcribe_final_after_speech": 214.1,
+   "agent_ms": 439.6,
+   "text_decider_ms": 439.35333302943036,
+   "text_decider_server_ms": 401.6,
+   "decided_ms": 439.5,
+   "ready_ms": 439.5,
+   "polly_first_byte": 61.7
+  },
+  "usd": 0,
+  "measured_at": "2026-10-22T15:49:55Z"
+ },
+ {
+  "id": "p117",
+  "script": "What does this box say?",
+  "heard": "What does this box say?",
+  "audio": "eval/audio/video-2026-10-22/p117.wav",
+  "speaker_role": "cook",
+  "near_mic": true,
+  "decider": {
+   "addressed": 0.7941,
+   "medicine": 0.0888,
+   "brain": {
+    "quiet_answer": 0.0183,
+    "look": 0.8732,
+    "read_closely": 0.0715,
+    "ask_human": 0.037
+   },
+   "brain_top": "look",
+   "brain_conf": 0.8309
+  },
+  "frame": {},
+  "action": "answer",
+  "brain_badge": null,
+  "model": null,
+  "verdict": "gate:blurred",
+  "earcon": "heard",
+  "model_answer": null,
+  "said": "Hold it up to the camera.",
+  "timing_ms": {
+   "transcribe_final_after_speech": 207.6,
+   "agent_ms": 503.4,
+   "text_decider_ms": 419.6397499763407,
+   "text_decider_server_ms": 412.55,
+   "decided_ms": 419.8,
+   "ready_ms": 419.8,
+   "polly_first_byte": 79.0
+  },
+  "usd": 0,
+  "measured_at": "2026-10-22T15:49:58Z"
+ }
+]

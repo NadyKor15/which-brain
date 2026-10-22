@@ -1,6 +1,11 @@
 """Real system output for the video overlay: chosen recorded phrases, end to end.
 
     python eval/demo_turns.py p056 p118 p096 p001 p074 --near-mic=code   # paid, capped
+    DEMO_AUDIO=eval/audio/video-2026-10-22 python eval/demo_turns.py ...  # re-recorded takes for the video
+
+With DEMO_AUDIO the phrases are read from that folder (new takes of the same script lines), their own
+Transcribe cache sits next to them, and near_mic is recomputed from the take's loudness against the
+same calibrated cook level and margin as the eval (the eval's numbers are untouched).
 
 For each phrase: what Transcribe heard, Decider's numbers (Q1-Q3 and, for a look, frame_check and
 item_is_medicine), the brain badge, the words said and the timing strip. Writes
@@ -13,6 +18,7 @@ from __future__ import annotations
 import asyncio
 import csv
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -45,14 +51,18 @@ def main(ids: list[str], near_mic: str) -> None:
     fr = rl.frame_rows_from(
         next(iter(sorted((rl.MAIN / "eval" / "out").glob("frames-2*.jsonl"))[-1:]), None)
     )
-    cache_asr = audio.TranscriptCache(rl.ASR_CACHE)
+    take_dir = Path(os.environ["DEMO_AUDIO"]).resolve() if os.environ.get("DEMO_AUDIO") else None
+    cache_asr = audio.TranscriptCache(take_dir / "asr-cache" if take_dir else rl.ASR_CACHE)
     turns = []
 
     async def go() -> None:
         for i in ids:
             r = table[i]
-            t = await audio.transcribe_file(i, rl.AUDIO / f"{i}.wav", cap=spend, cache=cache_asr)
-            asr_row = {x["id"]: x for x in rl.read_jsonl(rl.latest("asr-*.jsonl"))}.get(i, {})
+            src = (take_dir or rl.AUDIO) / f"{i}.wav"
+            t = await audio.transcribe_file(i, src, cap=spend, cache=cache_asr)
+            asr_row = dict({x["id"]: x for x in rl.read_jsonl(rl.latest("asr-*.jsonl"))}.get(i, {}))
+            if take_dir and asr_row.get("cook_dbfs") is not None:
+                asr_row["near_mic"] = audio.near_mic(t.speech_dbfs, asr_row["cook_dbfs"], asr_row["margin_db"])
             img = rl.load_frame(fr.get(i))
             turn = bp.Turn(
                 latest=t.text,
@@ -90,6 +100,7 @@ def main(ids: list[str], near_mic: str) -> None:
                         "id": key,
                         "script": r["script_text"],
                         "heard": t.text,
+                        "audio": str(src.relative_to(rl.MAIN)) if src.is_relative_to(rl.MAIN) else src.name,
                         "speaker_role": r["speaker_role"],
                         "near_mic": turn.near_mic,
                         "decider": reply.probs,

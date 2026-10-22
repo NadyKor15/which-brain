@@ -115,7 +115,7 @@ def script_order():
 
 def main(audio, noise_db=-35.0, min_pause=0.8):
     rows = script_order()
-    out = ROOT / "eval/audio"
+    out = Path(os.environ.get("SLICE_OUT", ROOT / "eval/audio"))  # SLICE_OUT: cut extra takes elsewhere
     out.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory() as tmp:
         wav = f"{tmp}/all.wav"
