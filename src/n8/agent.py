@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import asyncio
 import importlib.util
+import re
 import sys
 import time
 from dataclasses import dataclass, field
@@ -125,6 +126,18 @@ def _call_row(c: Call) -> dict[str, Any]:
     }
 
 
+NON_CLAIM = re.compile(
+    r"\s*(sorry|i can'?t|i cannot|i'?m not sure|i don'?t|i do not)\b", re.IGNORECASE
+)
+
+
+def hedged(answer: str) -> str:
+    """'I think' + the answer, keeping "I" and names capitalised."""
+    first = answer.split()[0] if answer.split() else ""
+    keep = first in ("I", "I'm", "I've") or (len(first) > 1 and first[:2].isupper())
+    return f"I think {answer if keep else answer[0].lower() + answer[1:]}"
+
+
 def answer_guard(answer: str) -> bool:
     """True when a model answer talks about medicine or states a dose: code refuses instead."""
     return bool(MEDICINE_KEYWORDS.search(answer) or rules.states_dose(answer))
@@ -148,8 +161,11 @@ def speak_reply(answer: str, frame: Any, image_brain: bool) -> tuple[str, str | 
     if image_brain and verdict == "hedge":
         if rules.is_critical(answer):  # no OCR to show the visible start: ask for a closer look
             return rules.HOLD_CLOSER, verdict
-        said = f"I think {answer[0].lower()}{answer[1:]}" if answer else rules.HOLD_CLOSER
-        return said, verdict
+        if not answer:
+            return rules.HOLD_CLOSER, verdict
+        if NON_CLAIM.match(answer):  # "Sorry, I can't read it" is not a claim to hedge
+            return answer, verdict
+        return hedged(answer), verdict
     if rules.hedge_violations(answer):  # the model hedged a number itself
         return (rules.HOLD_CLOSER if image_brain else NOT_SURE), "hedged_number"
     return answer, verdict

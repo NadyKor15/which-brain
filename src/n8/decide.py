@@ -85,6 +85,11 @@ def degraded(text: str) -> Decision:
 FRAME_CLEAR = 0.90
 FRAME_UNREADABLE = 0.60
 ITEM_MEDICINE_TAU = 0.30
+# Brief §2: item_is_medicine was untested on pills; if its false alarms on food packs pass about 10 %,
+# it is "logged only". Measured 2026-10-22 on 36 food photos at 0.30: 9 false alarms (25 %), so it
+# is logged only. Medicine is still refused from the words (about_medicine, ask_human) and from
+# the answer text (src/n8/agent.py: answer_guard).
+ITEM_MEDICINE_ACTS = False
 MAX_REASKS = 2
 
 
@@ -97,14 +102,17 @@ def frame_verdict(
     unreadable: float = FRAME_UNREADABLE,
     medicine_tau: float = ITEM_MEDICINE_TAU,
     max_reasks: int = MAX_REASKS,
+    medicine_acts: bool | None = None,
 ) -> str:
     """How sure the helper may sound about a frame: "refuse", "reask", "hedge" or "plain".
 
-    Medicine in the picture refuses. "unreadable" asks for a closer look at most
+    Medicine in the picture refuses when ``medicine_acts`` (default: ``ITEM_MEDICINE_ACTS``, off since
+    the 2026-10-22 measurement; the probability is still logged). "unreadable" asks for a closer look at most
     ``max_reasks`` times, then the answer goes out hedged. "clear" below 0.90 or
     "partly" is hedged ("I think"), and rules.compose never hedges a number.
     """
-    if item_medicine.probability >= medicine_tau:
+    acts = ITEM_MEDICINE_ACTS if medicine_acts is None else medicine_acts
+    if acts and item_medicine.probability >= medicine_tau:
         return "refuse"
     p = frame.probabilities
     if p.get("unreadable", 0.0) >= unreadable:

@@ -82,7 +82,8 @@ def test_unreadable_reasks_at_most_twice():
     assert shs.hedge("reask", "x") == rules.HOLD_CLOSER
 
 
-def test_medicine_in_the_picture_refuses():
+def test_medicine_in_the_picture_refuses(monkeypatch):
+    monkeypatch.setattr("n8.decide.ITEM_MEDICINE_ACTS", True)
     r = asyncio.run(
         shs.look(
             server({"clear": 0.95, "partly": 0.04, "unreadable": 0.01}, 0.35).client(), sharp()

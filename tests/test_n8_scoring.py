@@ -118,6 +118,7 @@ def test_did_you_ask_is_followed_by_yes_and_decided_again():
 
 def test_medicine_in_the_photo_refuses_a_look_offline_too():
     rl = runner()
+    rl.ITEM_MEDICINE_ACTS = True  # the switch is off by default since the 22.10 photo measurement
     table = [
         {**row("f1", "F", "Y", "Y", "ask_human", "What's this?"), "frame_path": "frames/f1.jpg"}
     ]

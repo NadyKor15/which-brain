@@ -35,7 +35,7 @@ sys.path.insert(0, str(ROOT / "eval"))
 from decider_kit.client import ChoiceAnswer, DeciderClient, NoulAnswer  # noqa: E402
 from decider_kit.questions import load_questions  # noqa: E402
 from n8 import audio, baselines, frames, rules, speak  # noqa: E402
-from n8.decide import ITEM_MEDICINE_TAU, MEDICINE_KEYWORDS, Decision, decide  # noqa: E402
+from n8.decide import ITEM_MEDICINE_ACTS, ITEM_MEDICINE_TAU, MEDICINE_KEYWORDS, Decision, decide  # noqa: E402
 from n8.spend import SpendCap  # noqa: E402
 
 
@@ -280,7 +280,7 @@ def final_decision(
         if use_gate and status != "ok":
             return "hold_up", dec.brain, after_yes
         p = (frame or {}).get("item_medicine")
-        if use_gate and p is not None and p >= ITEM_MEDICINE_TAU:
+        if use_gate and ITEM_MEDICINE_ACTS and p is not None and p >= ITEM_MEDICINE_TAU:
             return "refuse", "ask_human", after_yes
     return dec.action, dec.brain, after_yes
 

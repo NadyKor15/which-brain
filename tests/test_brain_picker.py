@@ -159,7 +159,8 @@ def test_ask_human_top_choice_refuses_at_any_confidence(tmp_path):
     assert reply.action == "refuse"
 
 
-def test_item_medicine_in_the_frame_refuses_after_the_answer_is_discarded(tmp_path):
+def test_item_medicine_in_the_frame_refuses_after_the_answer_is_discarded(tmp_path, monkeypatch):
+    monkeypatch.setattr("n8.decide.ITEM_MEDICINE_ACTS", True)
     reply, b, _ = play(
         tmp_path,
         text_server(item_medicine=0.4),
@@ -507,7 +508,8 @@ def test_vision_check_4xx_fails_closed_and_does_not_crash(tmp_path):
     assert reply.said == bp.SORRY and reply.verdict == "degraded"
 
 
-def test_quiet_brain_with_a_pill_in_view_still_refuses_and_sends_no_frame(tmp_path):
+def test_quiet_brain_with_a_pill_in_view_still_refuses_and_sends_no_frame(tmp_path, monkeypatch):
+    monkeypatch.setattr("n8.decide.ITEM_MEDICINE_ACTS", True)
     quiet = {"quiet_answer": 0.95, "look": 0.02, "read_closely": 0.02, "ask_human": 0.01}
     reply, b, server = play(
         tmp_path,
@@ -613,3 +615,37 @@ def test_frame_goes_with_a_read_only_what_you_see_instruction(tmp_path):
         turn("How many ounces in a pound?"),
     )
     assert not any("picture" in blk.get("text", "") for blk in b.micro.inner.seen[0][-1]["content"])
+
+
+def test_item_medicine_is_logged_only_by_default_and_the_answer_guard_still_refuses(tmp_path):
+    """Measured 2026-10-22: 9 of 36 food photos false-alarmed at 0.30, so the frame flag only logs."""
+    reply, _, _ = play(
+        tmp_path,
+        text_server(item_medicine=0.6),
+        turn(frame=label_image()),
+        texts={"lite": "Tomato soup."},
+    )
+    assert reply.action == "answer" and reply.frame_probs["item_medicine"] == 0.6
+    reply, _, _ = play(
+        tmp_path,
+        text_server(item_medicine=0.6),
+        turn(frame=label_image()),
+        texts={"lite": "Acetaminophen 500 mg caplets."},
+    )
+    assert reply.action == "refuse" and reply.verdict == "answer_guard"
+
+
+def test_hedge_never_glues_i_think_to_an_apology_and_keeps_names(tmp_path):
+    from n8.agent import hedged, speak_reply
+
+    frame = bp.FrameResult("hedge")
+    assert speak_reply("Sorry, I can't read the text in the picture.", frame, True)[0].startswith(
+        "Sorry"
+    )
+    assert (
+        speak_reply("I can't see the temperature.", frame, True)[0]
+        == "I can't see the temperature."
+    )
+    assert hedged("Tomato soup, condensed.") == "I think tomato soup, condensed."
+    assert hedged("I see a red lid.") == "I think I see a red lid."
+    assert hedged("SUGAR, granulated.") == "I think SUGAR, granulated."
