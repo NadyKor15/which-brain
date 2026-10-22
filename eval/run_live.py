@@ -464,7 +464,7 @@ def cmd_score(args: argparse.Namespace) -> None:
     frames_path = (
         Path(args.frames)
         if args.frames
-        else next(iter(sorted((MAIN / "eval" / "out").glob("frames-*.jsonl"))[-1:]), None)
+        else next(iter(sorted((MAIN / "eval" / "out").glob("frames-2*.jsonl"))[-1:]), None)
     )
     fr = frame_rows_from(frames_path)
     gates = {k: frame_info(fr, k) for k in fr}
@@ -624,7 +624,7 @@ def cmd_e2e(args: argparse.Namespace) -> None:
     asr = {x["id"]: x for x in read_jsonl(latest("asr-*.jsonl"))}
     thr_all = json.loads(latest("thresholds-*.json").read_text())
     thresholds = thr_all.get(THRESHOLD_KEY[args.near_mic])
-    frames_path = next(iter(sorted((MAIN / "eval" / "out").glob("frames-*.jsonl"))[-1:]), None)
+    frames_path = next(iter(sorted((MAIN / "eval" / "out").glob("frames-2*.jsonl"))[-1:]), None)
     fr = frame_rows_from(frames_path)
     table = [r for r in rows() if args.split == "all" or r["split"] == args.split]
     if args.rows == "text":
@@ -983,7 +983,7 @@ def cmd_frames_study(args: argparse.Namespace) -> None:
     from n8 import agent as n8agent
     from n8.brains import bedrock_brains
 
-    frames_path = sorted((MAIN / "eval" / "out").glob("frames-*.jsonl"))
+    frames_path = sorted((MAIN / "eval" / "out").glob("frames-2*.jsonl"))
     if not frames_path:
         sys.exit("no frames-*.jsonl yet (run eval/run_frames.py on the photos)")
     shots = [x for x in read_jsonl(frames_path[-1]) if x["label"] != "none"]

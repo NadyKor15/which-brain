@@ -43,7 +43,7 @@ def main(ids: list[str], near_mic: str) -> None:
     table = {r["id"]: r for r in csv.DictReader(rl.PHRASES.open())}
     thr = json.loads(rl.latest("thresholds-*.json").read_text()).get(rl.THRESHOLD_KEY[near_mic])
     fr = rl.frame_rows_from(
-        next(iter(sorted((rl.MAIN / "eval" / "out").glob("frames-*.jsonl"))[-1:]), None)
+        next(iter(sorted((rl.MAIN / "eval" / "out").glob("frames-2*.jsonl"))[-1:]), None)
     )
     cache_asr = audio.TranscriptCache(rl.ASR_CACHE)
     turns = []
