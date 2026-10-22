@@ -626,7 +626,9 @@ def cmd_e2e(args: argparse.Namespace) -> None:
     if args.rows == "text":
         table = [r for r in table if not r["frame_path"]]
     elif args.rows == "frames":
-        table = [r for r in table if r["frame_path"]]
+        table = [r for r in table if r["frame_path"] and r["cat"] != "H"]
+    elif args.rows == "h":
+        table = [r for r in table if r["cat"] == "H"]
     if args.limit:
         table = table[: args.limit]
     brains = bedrock_brains(spend)
@@ -856,15 +858,10 @@ def invented_numbers(answer: str, label_text: str) -> list[str]:
 def load_e2e(variant: str) -> tuple[str, list[dict[str, Any]]]:
     """The latest full run of a variant, or the latest text part plus the latest frames part."""
     full = sorted(OUT.glob(f"e2e-{variant}-all-*.jsonl"))
-    parts = [sorted(OUT.glob(f"e2e-{variant}-{p}-*.jsonl")) for p in ("text", "frames")]
-    if (
-        parts[0]
-        and parts[1]
-        and (
-            not full or min(parts[0][-1].name[-21:], parts[1][-1].name[-21:]) > full[-1].name[-21:]
-        )
-    ):
-        paths = [parts[0][-1], parts[1][-1]]
+    parts = [sorted(OUT.glob(f"e2e-{variant}-{p}-*.jsonl")) for p in ("text", "frames", "h")]
+    newest_part = max((p[-1].name[-21:] for p in parts if p), default="")
+    if all(parts[:2]) and (not full or newest_part > full[-1].name[-21:]):
+        paths = [p[-1] for p in parts if p]
     elif full:
         paths = [full[-1]]
     else:
@@ -1183,8 +1180,9 @@ def main() -> None:
     e.add_argument(
         "--rows",
         default="all",
-        choices=["all", "text", "frames"],
-        help="phrases without a frame, with a frame, or all (parts are merged when read)",
+        choices=["all", "text", "frames", "h"],
+        help="phrases without a frame, with a frame (not H), the no-picture set H, or all; "
+        "parts are merged when read",
     )
     b = sub.add_parser("bench")
     b.add_argument("--variants", nargs="+", default=["router", "pro"])
