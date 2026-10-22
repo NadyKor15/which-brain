@@ -787,14 +787,20 @@ async def classifier_turn(t: Any, brains: Any, bp: Any) -> Any:
                     {"image": {"format": "jpeg", "source": {"bytes": frames.for_bedrock(t.frame)}}}
                 )
             agent = Agent(model=router, system_prompt=n8agent.SYSTEM_PROMPT, callback_handler=None)
-            result = await agent.invoke_async([{"role": "user", "content": content}])
-            reply.answer = n8agent._text(result.message)
-            reply.routed = routed.get("name")
-            reply.brain = reply.routed
-            # the same last checks in code as the router (no Request 2: b has no frame_check)
-            reply.said, reply.verdict = n8agent.speak_reply(
-                reply.answer, None, reply.routed in bp.IMAGE_BRAINS
-            )
+            try:
+                result = await agent.invoke_async([{"role": "user", "content": content}])
+            except Exception as exc:  # e.g. a picture routed to Nova Micro, which takes text only
+                reply.action, reply.said = "error", bp.SORRY
+                reply.answer = f"{type(exc).__name__}: {str(exc)[:200]}"
+                reply.routed = routed.get("name")
+            else:
+                reply.answer = n8agent._text(result.message)
+                reply.routed = routed.get("name")
+                reply.brain = reply.routed
+                # the same last checks in code as the router (no Request 2: b has no frame_check)
+                reply.said, reply.verdict = n8agent.speak_reply(
+                    reply.answer, None, reply.routed in bp.IMAGE_BRAINS
+                )
             if reply.said == rules.MEDICINE_REFUSE:
                 reply.action = "refuse"
     calls = brains.take_calls()
