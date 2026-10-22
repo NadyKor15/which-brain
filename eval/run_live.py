@@ -977,6 +977,7 @@ def cmd_frames_study(args: argparse.Namespace) -> None:
     from n8.decide import frame_verdict
 
     brains = bedrock_brains(cap())
+    sides = photo_sides()
     out = []
 
     async def go() -> None:
@@ -996,13 +997,14 @@ def cmd_frames_study(args: argparse.Namespace) -> None:
             ans = reply.answer or ""
             name = NAME_WORDS.get(x["label"])
             right = (name.lower() in ans.lower()) if name else None
-            if x["label"] in MEDICINE_LABELS:
-                right = (
-                    None  # medicine is refused, never read out; listed for item_is_medicine only
-                )
+            side = sides.get(x["file"], "front")
+            if x["label"] in MEDICINE_LABELS or side == "back":
+                # medicine is refused, never read out; the back shows small print, not the name
+                right = None
             out.append(
                 {
                     **{k: x[k] for k in ("file", "label", "gold_frame", "gate")},
+                    "side": side,
                     "verdict": verdict,
                     "item_medicine": x["medicine"],
                     "answer": ans,
